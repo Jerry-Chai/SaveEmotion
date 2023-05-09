@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -22,9 +23,9 @@ namespace UnityEditor.Tilemaps
             }
 
             var tilemap = brushTarget.GetComponent<Tilemap>();
-            Debug.Log(tilemap.GetTile(position));
-            
-            
+            var tile = tilemap.GetTile(position) as Tile;
+            Debug.Log(tile.name +" , " + tile.sprite);
+
         }
 
         /// <summary>Erases tiles and GameObjects from given bounds within the selected layers.</summary>
