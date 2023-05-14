@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
@@ -54,7 +56,8 @@ public class TileInfoCollector : MonoBehaviour
             Debug.Log(currTilemap.name);
             
             foreach (var pos in currTilemap.cellBounds.allPositionsWithin)
-            {   
+            { 
+                
                 Vector3Int localPlace = new Vector3Int(pos.x, pos.y, pos.z);
                 //Vector3 place = tilemap.CellToWorld(localPlace);
                 if (currTilemap.HasTile(localPlace))
@@ -71,9 +74,23 @@ public class TileInfoCollector : MonoBehaviour
     public void GeneratePrefab(Vector3Int localPlace, string name, float scale)
     {
         if (!prefabDic.ContainsKey(name)) return;
+        var tempPos = new Vector3(localPlace.x * Mathf.Sqrt(3.0f) / 2.0f, localPlace.y, localPlace.z);
+        if (localPlace.y % 2 == 0)
+        {
+            tempPos.x -= 0.5f * Mathf.Sqrt(3.0f) / 2.0f;
+        }
+        else
+        {
+            //tempPos.x += 0.5f;
+        }
+
+        tempPos *= scale;
+        tempPos.y *= (3.0f / 4.0f);
+
+        //tempPos.y *= (float)Math.Sqrt(3) / 2.0f;
         GameObject tempObj = Instantiate(prefabDic[name]);
         tempObj.transform.parent = rootGO.transform;
-        tempObj.transform.localPosition =  scale * new Vector3(localPlace.x,localPlace.y, localPlace.z);
+        tempObj.transform.localPosition = tempPos;
     }
 }
 

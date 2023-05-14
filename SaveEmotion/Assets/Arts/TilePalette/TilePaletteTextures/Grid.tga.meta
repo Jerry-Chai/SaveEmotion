@@ -107,15 +107,15 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Grid_0
+      name: Grid_1
       rect:
         serializedVersion: 2
-        x: 39
+        x: 162
         y: 419
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -128,15 +128,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Grid_1
+      name: Grid_0
       rect:
         serializedVersion: 2
-        x: 162
+        x: 39
         y: 419
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -144,27 +144,6 @@ TextureImporter:
       bones: []
       spriteID: e00efa11965350849a584d7a84311d5b
       internalID: 1512454778
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Grid_2
-      rect:
-        serializedVersion: 2
-        x: 287
-        y: 419
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 02f166a400f551c4e9cde198f0596fce
-      internalID: -398745431
       vertices: []
       indices: 
       edges: []
@@ -178,7 +157,28 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 02f166a400f551c4e9cde198f0596fce
+      internalID: -398745431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Grid_2
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 419
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -186,6 +186,90 @@ TextureImporter:
       bones: []
       spriteID: 5a40e60194758f846a2c7eb82d9b9ba4
       internalID: 1172168836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Grid_4
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 276
+        width: 101
+        height: 102
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0f1a0835330c62247a523ccfe4bb2f0c
+      internalID: 861175630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Grid_5
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 277
+        width: 85
+        height: 98
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 85760f5922caed24587799ec9d7c9754
+      internalID: 402911090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Grid_6
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 277
+        width: 85
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 229e54367115f4642ac656d7e9d5870c
+      internalID: 656337393
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Grid_7
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 275
+        width: 84
+        height: 99
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bdb6756ef87fa4a4e924f69cc6bd8e14
+      internalID: -2044470118
       vertices: []
       indices: 
       edges: []
@@ -201,10 +285,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Grid_1: 1512454778
-      Grid_0: 693291033
-      Grid_3: 1172168836
-      Grid_2: -398745431
+      Grid_1: 693291033
+      Grid_6: 656337393
+      Grid_0: 1512454778
+      Grid_4: 861175630
+      Grid_3: -398745431
+      Grid_5: 402911090
+      Grid_2: 1172168836
+      Grid_7: -2044470118
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
