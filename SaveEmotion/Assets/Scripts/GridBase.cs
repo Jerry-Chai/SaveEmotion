@@ -21,8 +21,8 @@ public class GridBase : MonoBehaviour
     {
         if (other.gameObject.name == "Ball")
         {
-            Debug.Log("Test!");
-            Destroy(this.gameObject);
+            //Debug.Log("Test!");
+            this.gameObject.SetActive(false);
         }
 
     }
