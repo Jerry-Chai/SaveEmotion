@@ -17,15 +17,22 @@ public class CharectorController : MonoBehaviour
     public GameObject lowerBound;
     public GameObject boardMountPoint;
 
+
     public GameObject ball;
     public GameObject ballMountPoint;
 
     public Camera cam;
     public bool faceRight = true;
-    public float maxAngle = 60.0f;
 
     public bool isGameStart = false;
     public bool canShootBall = true;
+
+    [Header("Shoot Param Settings")]
+    public float punchTime = 0.5f;
+    public float startAngle = 30.0f;
+    public float endAngle = 60.0f;
+    public float shootCoolDown = 1.0f;
+    public float lastShootTillNow = 100.0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +41,9 @@ public class CharectorController : MonoBehaviour
 
         ball.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
         isGameStart = false;
+
+
+
     }
 
     // Update is called once per frame
@@ -56,15 +66,23 @@ public class CharectorController : MonoBehaviour
         if (inputX < -0.01f || inputX > 0.01f) shouldUpdate = true;
         if (inputY < -0.01f || inputY > 0.01f) shouldUpdate = true;
         
-        // board rotation:
-        if (faceRight && Mathf.Abs(Vector3.Angle(directionVector, Vector3.right)) < maxAngle)
+        //// board rotation:
+        //if (faceRight && Mathf.Abs(Vector3.Angle(directionVector, Vector3.right)) < maxAngle)
+        //{
+        //    boardMountPoint.transform.rotation = Quaternion.LookRotation(directionVector) * Quaternion.FromToRotation(Vector3.right, Vector3.forward);
+        //}
+        //if (!faceRight && Mathf.Abs(Vector3.Angle(directionVector, Vector3.left)) < maxAngle)
+        //{
+        //    boardMountPoint.transform.rotation = Quaternion.LookRotation(directionVector) * Quaternion.FromToRotation(Vector3.left, Vector3.forward);
+        //}
+
+        if (Input.GetButtonDown("Fire1") && lastShootTillNow > shootCoolDown)
         {
-            boardMountPoint.transform.rotation = Quaternion.LookRotation(directionVector) * Quaternion.FromToRotation(Vector3.right, Vector3.forward);
+            Debug.Log("Test!!");
+            lastShootTillNow = 0.0f;
+            StartCoroutine(DoRightPunch());
         }
-        if (!faceRight && Mathf.Abs(Vector3.Angle(directionVector, Vector3.left)) < maxAngle)
-        {
-            boardMountPoint.transform.rotation = Quaternion.LookRotation(directionVector) * Quaternion.FromToRotation(Vector3.left, Vector3.forward);
-        }
+        lastShootTillNow += Time.deltaTime;
 
         
         // face towards:
@@ -121,11 +139,11 @@ public class CharectorController : MonoBehaviour
         if (random > 0.5f)
         {
                 
-            ballRb.AddForce(new Vector2(5000, 5000));
+            ballRb.AddForce(new Vector2(8000, 8000));
         }
         else
         {
-            ballRb.AddForce(new Vector2(-5000, 5000));
+            ballRb.AddForce(new Vector2(-8000, 8000));
         }
     }
 
@@ -134,5 +152,35 @@ public class CharectorController : MonoBehaviour
     {
         ball.transform.position = new Vector3(ballMountPoint.transform.position.x, ballMountPoint.transform.position.y,
             ball.transform.position.z);
+    }
+
+    IEnumerator DoRightPunch()
+    {
+        
+        Vector3 directionVector = Vector3.Normalize(new Vector3(Mathf.Cos(2 * Mathf.PI * (endAngle / 360.0f)), Mathf.Sin(2 * Mathf.PI * (endAngle / 360.0f)), 0.0f));
+        if (!faceRight)
+        {
+            directionVector = Vector3.Normalize(new Vector3(Mathf.Cos(2 * Mathf.PI * (endAngle / 360.0f)), -Mathf.Sin(2 * Mathf.PI * (endAngle / 360.0f)), 0.0f));
+        }
+        Quaternion endPos =  Quaternion.LookRotation(directionVector) * Quaternion.FromToRotation(Vector3.right, Vector3.forward);
+
+        directionVector = Vector3.Normalize(new Vector3(Mathf.Cos(2 * Mathf.PI * (startAngle / 360.0f)), -Mathf.Sin(2 * Mathf.PI * (startAngle / 360.0f)), 0.0f));
+        if (!faceRight)
+        {
+            directionVector = Vector3.Normalize(new Vector3(Mathf.Cos(2 * Mathf.PI * (startAngle / 360.0f)), Mathf.Sin(2 * Mathf.PI * (startAngle / 360.0f)), 0.0f));
+        }
+        Quaternion startPos =  Quaternion.LookRotation(directionVector) * Quaternion.FromToRotation(Vector3.right, Vector3.forward);
+
+
+
+        float remainTime = punchTime;
+        while (remainTime > 0)
+        {
+            remainTime -= Time.deltaTime;
+            boardMountPoint.transform.rotation = Quaternion.Lerp(endPos, startPos, remainTime / punchTime);
+            yield return null;
+        }
+        boardMountPoint.transform.rotation = startPos;
+        yield return null;
     }
 }
