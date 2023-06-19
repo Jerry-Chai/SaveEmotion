@@ -11,10 +11,11 @@ public class GameManager : Singleton<GameManager>
 
     public enum GameState
     {
-        Init,
+        NeedToReset,
+        Inited,
         Start,
         GameOver,
-        WaitingForInput
+        WaitingForInput,
     }
 
     [Header("Input Manager")]
@@ -35,6 +36,7 @@ public class GameManager : Singleton<GameManager>
     public Rigidbody flipperRigidbody;
 
     [Header("Ball params")]
+    public GameObject ball_prefab;
     public GameObject ball;
     public GameObject ballInitPosGo;
 
@@ -47,21 +49,35 @@ public class GameManager : Singleton<GameManager>
     // Start is called before the first frame update
     void Start()
     {
+        gameState = GameState.NeedToReset;
+        if (gameState == GameState.NeedToReset) 
+        {
+            StartCoroutine("WaitForShoot");
+        }
+
         hinge = flipperGo.GetComponent<HingeJoint>();
-        gameState = GameState.Init;
 
         BodyFlipperDiff = Body.transform.position - flipperConnectedBody.transform.position;
-        ball.transform.position = ballInitPosGo.transform.position;
 
-        if (gameState == GameState.Init)
-        {
-            StartCoroutine(WaitForShoot());
-        }
+        //if (gameState == GameState.Init)
+        //{
+        //    StartCoroutine("WaitForShoot");
+        //}
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (gameState == GameState.NeedToReset) 
+        {
+            StartCoroutine("WaitForShoot");
+            gameState = GameState.Inited;
+        }
+
+        if (gameState == GameState.Start) 
+        {
+            StopCoroutine("WaitForShoot");
+        }
 
         // motor = hinge.motor;	
         // motor = hinge.motor;														//		Flipper is desactivate. But you want him to go to the init position.
@@ -98,7 +114,18 @@ public class GameManager : Singleton<GameManager>
 
     IEnumerator WaitForShoot()
     {
-        while (gameState == GameState.Init)
+        if (ball) 
+        {
+            Destroy(ball);
+        }
+
+        GameObject ball_instance = Instantiate(ball_prefab);
+        ball_instance.transform.position = ballInitPosGo.transform.position;
+        ball_instance.name = "ball_instance";
+        ball_instance.SetActive(true);
+        ball = ball_instance;
+
+        while (gameState == GameState.NeedToReset || gameState == GameState.Inited)
         {
             ball.GetComponent<SphereCollider>().enabled = false;
             ball.transform.position = ballInitPosGo.transform.position;
@@ -110,13 +137,14 @@ public class GameManager : Singleton<GameManager>
         }
         //yield return new WaitForSeconds(2);
         //gameState = GameState.WaitingForInput;
+
     }
 
     public void ShootBall() 
     {
-        gameState = GameState.Start;
-        Rigidbody ballRB= ball.GetComponent<Rigidbody>();
+        Rigidbody ballRB = ball.GetComponent<Rigidbody>();
         ball.GetComponent<SphereCollider>().enabled = true;
+        gameState = GameState.Start;
         ballRB.velocity = new Vector3(1, 0, 1);
 
     }
