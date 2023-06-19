@@ -10,11 +10,16 @@ public class CharectorController : MonoBehaviour
 {
     public float moveSpeedVertical = 100.0f;
     public float moveSpeefHorizontal = 100.0f;
+    
+    
     public GameObject player;
+    
+    [Header("Flipper Move params")]
     public GameObject leftBound;
     public GameObject rightBound;
     public GameObject upperBound;
     public GameObject lowerBound;
+    public bool faceRight = true;
     public GameObject boardMountPoint;
 
 
@@ -22,7 +27,6 @@ public class CharectorController : MonoBehaviour
     public GameObject ballMountPoint;
 
     public Camera cam;
-    public bool faceRight = true;
 
     public bool isGameStart = false;
     public bool canShootBall = true;

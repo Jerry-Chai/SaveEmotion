@@ -31,6 +31,8 @@ public class Flippers : MonoBehaviour {
 
 	private bool 						b_PullPlunger = false;			// if you pull the plunger you can't use right flippers
 
+
+	
 	void Awake(){																	// --> Awake
 		Physics.IgnoreLayerCollision(8, 9, true);										// Ignore collision between Layer 8 : "Board" and Layer 9 : "Paddle"
 		Physics.IgnoreLayerCollision(10, 9, true);										// Ignore collision between Layer 8 : "Board" and Layer 9 : "Paddle"
@@ -48,7 +50,6 @@ public class Flippers : MonoBehaviour {
 	void Start() {																	// --> Start
 		hinge = GetComponent<HingeJoint>();											// Access GetComponent.<HingeJoint>()
 		StartCoroutine ("WaitToInit");
-
 	}
 
 	IEnumerator WaitToInit(){
@@ -76,13 +77,13 @@ public class Flippers : MonoBehaviour {
 			hingeSpring.spring = Random.Range(1.99f,2.01f);
 			hinge.spring = hingeSpring;
 			var motor = hinge.motor;	
-
+  
 			for (var i = 0; i < Input.touchCount; ++i) {							// --> Touch Screen part
 				if (Input.GetTouch(i).phase == TouchPhase.Began) {
-
+  
 					Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);	// Construct a ray from the current touch coordinates
 					RaycastHit hit;
-
+  
 					if (Physics.Raycast(ray,out hit, 100) 									// Don't move the right flippers if you pull the plnuger
 						&& (hit.transform.name == "Mobile_Collider_zl" || hit.transform.name == "Mobile_Collider")) {
 						b_PullPlunger = true;
@@ -91,9 +92,9 @@ public class Flippers : MonoBehaviour {
 						b_PullPlunger = false;
 					}
 				}
-
-
-
+  
+  
+  
 				if(!b_PullPlunger && b_Flipper_Right && Input.GetTouch(i).position.x > Screen.width*.5	// know which part of the screen is touched by the player
 					&& Input.GetTouch(i).position.y < Screen.height*.6 
                    || !b_PullPlunger && b_Flipper_Left && Input.GetTouch(i).position.x < Screen.width*.5 
@@ -124,8 +125,8 @@ public class Flippers : MonoBehaviour {
 				//	Down = true;
 				//}
 			}
-
-
+  
+  
 			if(!_GetButton){
 				if(Input.GetKey(name_F) || b_touch){										// --> the player presses a button or presses a touch screen
 					hinge.motor = motor;													// move the flipper
@@ -142,7 +143,7 @@ public class Flippers : MonoBehaviour {
 					motor = hinge.motor;													// move the flipper
 					hinge.motor = motor;
 					hinge.useMotor = true;
-
+  
 					if(!Down && Sfx_Flipper){
 						//Debug.Log ("Here");
 						source.volume = 1;
@@ -158,6 +159,11 @@ public class Flippers : MonoBehaviour {
 					Down = false;
 				}
 			}
+			
+
+
+
+
 		}	
 		else if(!b_Pause){																			// --> When the table is tilted. 
 			var motor = hinge.motor;	
@@ -165,6 +171,9 @@ public class Flippers : MonoBehaviour {
 			hinge.motor = motor;
 			hinge.useMotor = false;
 		}
+		
+
+
 	}
 
 
