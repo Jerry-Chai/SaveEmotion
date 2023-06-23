@@ -195,4 +195,14 @@ public class Flippers : MonoBehaviour {
 	public void  DeactivateFlipper(){											// Use This function is you want to deactivate flippers outside this script. Call SendMessage("DeactivateFlipper");
 		b_touch = false;
 	}
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        // --> Detect if the ball touch the flipper
+        if(collision.gameObject.tag == "Ball")
+		{
+			Debug.Log ("Here");
+			GameManager.Instance.TriggerHit();
+        }
+    }
 }

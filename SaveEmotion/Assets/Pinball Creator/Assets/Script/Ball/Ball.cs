@@ -103,10 +103,10 @@ public class Ball : MonoBehaviour {
 
 	public void OnTriggerEnter(Collider other){
 		Debug.Log("Collide");
-		if (other.tag == "Bricks") 
-		{
-			other.gameObject.SetActive(false);
-		}
+		//if (other.tag == "Bricks") 
+		//{
+		//	other.gameObject.SetActive(false);
+		//}
 		if(other.transform.tag == "Ramp_Sound" && tmp_Save_Min_Mag == 0){
 			Debug.Log("Ramp SOund Start");
 			tmp_Save_Min_Mag = min_Mag_roll_audio;

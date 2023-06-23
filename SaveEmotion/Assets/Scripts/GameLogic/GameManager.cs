@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using UIManagement;
+using Unity.PlasticSCM.Editor.WebApi;
 using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
@@ -46,6 +48,34 @@ public class GameManager : Singleton<GameManager>
     private Vector3 BodyFlipperDiff;
 
 
+    [Header("Game Prams")]
+    public int totalBricksNum;
+    public int currBricksNum;
+
+
+
+    [Header("Level Info")]
+    public LevelData level;
+    public string[] levelName;
+    public int currLevelPlayTime;
+    public bool loadNewLevel;
+    public bool startCountDown = false;
+    public float currSpentTime;
+
+
+    [Header("Skill Param")]
+    public bool isHitCount = true;
+    public bool isHit = false;
+    public bool isButtonPressed = false;
+    public float hitDuration = 0.3f;
+    public float buttonPressedDuration = 0.3f;
+    public float currentHitTime = 0;
+    public float currentButtonPressedTime = 0;
+    public float currSkillCharge = 0;
+    public float skillChargeCoolDown = 0.3f;
+    public int currentEnergy = 0;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -59,15 +89,28 @@ public class GameManager : Singleton<GameManager>
 
         BodyFlipperDiff = Body.transform.position - flipperConnectedBody.transform.position;
 
+        totalBricksNum = GameObject.Find("GridBase").transform.childCount;
+        currBricksNum = totalBricksNum;
         //if (gameState == GameState.Init)
         //{
         //    StartCoroutine("WaitForShoot");
         //}
+
+        level = GameObject.Find("LevelData").GetComponent<GameInfoContainer>().levelData;
+        LoadLevel(levelName[0]);
+        loadNewLevel = true;
+        startCountDown = false;
+        currSpentTime = currLevelPlayTime;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (startCountDown) 
+        {
+            currSpentTime -= Time.deltaTime;
+            UIManager.Instance._uiList["UIManagement.UICountDownPanel"].OnUpdate(currSpentTime);
+        }
         if (gameState == GameState.NeedToReset) 
         {
             StartCoroutine("WaitForShoot");
@@ -104,13 +147,73 @@ public class GameManager : Singleton<GameManager>
             newPos.z = Mathf.Max(lowerBound.transform.position.z, newPos.z);
             flipperRigidbody.MovePosition(newPos);
 
-
             Body.transform.position = flipperConnectedBody.transform.position + BodyFlipperDiff;
+
+            isHitCount = false;
+        }
+        else 
+        {
+            isHitCount = true;
+        }
+
+        if (Input.GetKeyDown("j")) 
+        {
+            currentButtonPressedTime = buttonPressedDuration;
+            isButtonPressed = true;
+        }
+
+        if (currentButtonPressedTime >= 0.0f)
+        {
+            currentButtonPressedTime -= Time.deltaTime;
+        }
+        else 
+        {
+            isButtonPressed = false;
+        }
+ 
+
+        if (currentHitTime >= 0.0f)
+        {
+            currentHitTime -= Time.deltaTime;
+        }
+        else
+        {
+            isHit = false;
+        }
+
+        if (currSkillCharge >= 0.0f) 
+        {
+            currSkillCharge -= Time.deltaTime;
+        }
+
+
+        if (Input.GetKeyDown("k")) 
+        {
+            TriggerUltSkill();
+        
+        }
+
+    }
+
+
+    public void TriggerHit()
+    {
+        if (isHitCount)
+        {
+            isHit = true;
+            currentHitTime = hitDuration;
+
+            if (isHit && isButtonPressed && currSkillCharge < 0.0f)
+            {
+                currSkillCharge = skillChargeCoolDown;
+                currentEnergy += 1;
+                currentEnergy = Mathf.Min(currentEnergy, 4);
+                UIManager.Instance._uiList["UIManagement.UISkillPanel"].OnUpdate(currentEnergy / 4.0f);
+            }
         }
 
 
     }
-
 
     IEnumerator WaitForShoot()
     {
@@ -147,6 +250,59 @@ public class GameManager : Singleton<GameManager>
         gameState = GameState.Start;
         ballRB.velocity = new Vector3(1, 0, 1);
 
+        if (loadNewLevel) 
+        {
+            loadNewLevel = false;
+            startCountDown = true;
+        }
+
+    }
+
+    public void UpdateBrickNum(int num) 
+    {
+        currBricksNum += num;
+        UpdateProgressBar(1.0f - (float)currBricksNum/(float)totalBricksNum);
+    }
+
+    public void UpdateProgressBar(float value)
+    {
+        
+        UIManager.Instance._uiList["UIManagement.UIProgressPanel"].OnUpdate(value);
+    
+    }
+
+    public void LoadLevel(string levelName) 
+    {
+        bool find = false;
+        foreach (SingleLevel level in level.levelLists)
+        {
+            if (levelName == level.name) 
+            {
+                currLevelPlayTime = level.gameTime;
+                find = true;
+            }
+        }
+        if(!find)
+        {
+            Debug.LogError("Can't find level: " + levelName);
+        }
+        else
+        {
+            Debug.Log("Load level: " + levelName);
+        }
+    }
+
+    public void TriggerUltSkill() 
+    {
+        if (currentEnergy >= 4) 
+        {
+            currentEnergy = 0;
+            UIManager.Instance._uiList["UIManagement.UISkillPanel"].OnUpdate(currentEnergy / 4.0f);
+            GridManager.Instance.TriggerSkill(ball.transform.position, 2, 2);
+        }
+        // 1 means padding 1 grid;
+        Debug.Log("Trigger Skill");
+    
     }
 
 }

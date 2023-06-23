@@ -17,13 +17,8 @@ public class GridBase : MonoBehaviour
         
     }
 
-    public virtual void OnTriggerEnter2D(Collider2D other)
+    public virtual void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.name == "Ball")
-        {
-            //Debug.Log("Test!");
-            this.gameObject.SetActive(false);
-        }
 
     }
 }
