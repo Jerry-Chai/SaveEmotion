@@ -74,10 +74,11 @@ public class TileInfoCollector : MonoBehaviour
     public void GeneratePrefab(Vector3Int localPlace, string name, float scale)
     {
         if (!prefabDic.ContainsKey(name)) return;
-        var tempPos = new Vector3(localPlace.x * Mathf.Sqrt(3.0f) / 2.0f, localPlace.y, localPlace.z);
+        // 分成 0 列和第一列， 这两列排布是不一样的
+        var tempPos = new Vector3(localPlace.x, localPlace.y, localPlace.z);
         if (localPlace.y % 2 == 0)
         {
-            tempPos.x -= 0.5f * Mathf.Sqrt(3.0f) / 2.0f;
+            tempPos.x -= 0.5f;
         }
         else
         {
