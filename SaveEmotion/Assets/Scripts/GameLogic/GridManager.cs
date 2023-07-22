@@ -1,6 +1,9 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.TerrainTools;
 using UnityEngine;
 
 public class GridManager : Singleton<GridManager>
@@ -9,11 +12,18 @@ public class GridManager : Singleton<GridManager>
     private GameObject upperLeft;
     private GameObject lowerRight;
     private Bounds bricksBounds;
+
+    /// <summary>
+    /// 用来记录初始化的格子数据
+    /// </summary>
+    public Dictionary<int, GridBase> gridDic;
+    public List<int> gridIDList;
+
     // Start is called before the first frame update
 
     void Start()
     {
-
+        
 
         var bricksInfo = GetComponent<BricksSetter>();
         bricksprefab = bricksInfo.bricksprefab;
@@ -43,6 +53,12 @@ public class GridManager : Singleton<GridManager>
 
     }
 
+    /// <summary>
+    /// 释放技能的时候调用
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="_width"></param>
+    /// <param name="_height"></param>
     public void TriggerSkill(Vector3 pos, int _width, int _height) 
     {
         int posWidth = Mathf.CeilToInt(Mathf.Abs(pos.x - upperLeft.transform.position.x)/bricksBounds.size.x);
@@ -82,4 +98,100 @@ public class GridManager : Singleton<GridManager>
       
     }
 
+    public void RegisteGrid(int instanceID, GridBase script)
+    {
+        if (gridDic == null) 
+        {
+            gridDic = new Dictionary<int, GridBase>();
+            gridIDList = new List<int>();
+        }
+        if (gridDic.ContainsKey(instanceID))
+        {
+            Debug.LogError("We should not have two same instanceID, something is wrong here");
+        }
+        else 
+        {
+            gridIDList.Add(instanceID);
+            gridDic[instanceID] = script;
+        }
+
+    }
+
+    /// <summary>
+    /// 这个函数用来处理，snall 技能触发的格子改变，触发了之后，看有多少个格子，这些格子依次变色。
+    /// 中间应该还会需要加入一些特效， 先用gameobecet来处理
+    /// </summary>
+    /// <param name=""></param>
+    /// <param name=""></param>
+    /// <param name=""></param>
+    public void LockGridBySnallSkill(int revertBlocksNum, Vector3 snallPos)
+    {
+        int count = revertBlocksNum;
+        while (count > 0) 
+        {
+            count--;
+        
+        }
+    }
+
+#if UNITY_EDITOR
+    public void TestRegisterWork() 
+    {
+        Debug.Log(gridDic.Count);
+    }
+
+    public void RandomizeGrid() 
+    {
+        foreach (var item in gridDic)
+        {
+            GridBase fatherScript = item.Value;
+            if (fatherScript.gridType == GridBase.GridType.Normal) 
+            {
+                NormalGrid childScript = fatherScript as NormalGrid;
+                float randomValue = UnityEngine.Random.Range(0, 1f);
+                if (randomValue > 0.5f)
+                {
+                    childScript.UnlockThisGrid();
+                }
+                else 
+                {
+                    childScript.LockThisGrid();
+                }
+            }
+        }
+    }
+
+#endif
+    /// <summary>
+    /// 这个接口主要是给蜗牛使用的， 告诉蜗牛一个可以行进的地方，这个地方是所有格子里面随机的一个。
+    /// </summary>
+    public Vector3 GetRandomGrid() 
+    {
+        int nextIndex = UnityEngine.Random.Range(0, gridIDList.Count);
+        return gridDic[gridIDList[nextIndex]].gameObject.transform.position;
+    }
 }
+
+
+#if UNITY_EDITOR
+[CustomEditor(typeof(GridManager))]
+public class GridManagerEditor : Editor 
+{
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+
+        GridManager script = target as GridManager;
+        if (GUILayout.Button("Test Grid Dic data")) 
+        {
+            script.TestRegisterWork();
+        }
+
+        if (GUILayout.Button("Randomize Grid"))
+        {
+            script.RandomizeGrid();
+        }
+
+    }
+}
+#endif

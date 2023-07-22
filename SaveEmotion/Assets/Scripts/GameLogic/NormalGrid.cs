@@ -28,9 +28,14 @@ public class NormalGrid : GridBase
 
     }
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
+        gridType = GridType.Normal;
+    }
+    // Start is called before the first frame update
+    public void Start()
+    {
+        base.Start();
         //create propertyblock only if none exists
         if (propertyBlock == null)
             propertyBlock = new MaterialPropertyBlock();
@@ -44,6 +49,8 @@ public class NormalGrid : GridBase
 
     public override void OnTriggerEnter(Collider other)
     {
+        base.OnTriggerEnter(other);
+        Debug.Log("NormalGrid OnTriggerEnter");
         if (other.tag == "Ball")
         {
             if (gridState == NormalGridLockState.Unlocked) return;

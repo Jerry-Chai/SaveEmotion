@@ -20,6 +20,8 @@ public class SnallBehaviour : MonoBehaviour
     public GameObject upperLeft;
     public GameObject lowerRight;
     // Start is called before the first frame update
+    // 表示蜗牛一次技能能改变多少个block的状态
+    public int revertBlocksNum;
 
     private float distanceRatioToStopPoint;
     
@@ -34,6 +36,7 @@ public class SnallBehaviour : MonoBehaviour
     private float currDistance;
     void Start()
     {
+       
         distanceRatioToStopPoint = 1.0f;
         state = SnallState.Idle;
 
@@ -82,6 +85,7 @@ public class SnallBehaviour : MonoBehaviour
         else if (state == SnallState.Defend && defendTimer < 0)
         {
             state = SnallState.Idle;
+            TrigerSnallSkill(revertBlocksNum);
             defendTimer = defendTime;
         }
         
@@ -89,25 +93,39 @@ public class SnallBehaviour : MonoBehaviour
 
     public Vector3 DetermineNextPos()
     {
+        // 根据蜗牛的位置， 以及gridManager得到的下个点的位置， 去判断，
+        // 如果这个点符合要求， 就走过去。
+        
         float currX = this.transform.position.x;
         float currY = this.transform.position.z;
         
-        // random dir:
-        float x = Random.Range(-moveMinRange, moveMaxRange);
-        float y = Random.Range(-moveMinRange, moveMaxRange);
+        //// random dir:
+        //float x = Random.Range(-moveMinRange, moveMaxRange);
+        //float y = Random.Range(-moveMinRange, moveMaxRange);
 
-        bool isXInBound = currX + x < lowerRight.transform.position.x && currX + x > upperLeft.transform.position.x;
-        bool isYInBound = currY + y < upperLeft.transform.position.z && currY + y > lowerRight.transform.position.z;
+        //bool isXInBound = currX + x < lowerRight.transform.position.x && currX + x > upperLeft.transform.position.x;
+        //bool isYInBound = currY + y < upperLeft.transform.position.z && currY + y > lowerRight.transform.position.z;
 
-        while (!isXInBound || !isYInBound) 
-        {
-            x = Random.Range(-moveMinRange, moveMaxRange);
-            y = Random.Range(-moveMinRange, moveMaxRange);
-            isXInBound = currX + x < lowerRight.transform.position.x && currX + x > upperLeft.transform.position.x;
-            isYInBound = currY + y < upperLeft.transform.position.z && currY + y > lowerRight.transform.position.z;
-        }
+        //while (!isXInBound || !isYInBound) 
+        //{
+        //    x = Random.Range(-moveMinRange, moveMaxRange);
+        //    y = Random.Range(-moveMinRange, moveMaxRange);
+        //    isXInBound = currX + x < lowerRight.transform.position.x && currX + x > upperLeft.transform.position.x;
+        //    isYInBound = currY + y < upperLeft.transform.position.z && currY + y > lowerRight.transform.position.z;
+        //}
+        Vector3 nextPos = GridManager.Instance.GetRandomGrid();
+        Debug.Log(nextPos);
+        return nextPos;
+        //return new Vector3(currX + x, this.transform.position.y, currY + y); ;
+    }
 
+    public void OnTriggerEnter(Collider other)
+    {
+            Debug.Log("Player is in the snall's range");
+    }
 
-        return new Vector3(currX + x, this.transform.position.y, currY + y); ;
+    public void TrigerSnallSkill(int revertBlockNum) 
+    {
+        GridManager.Instance.LockGridBySnallSkill(revertBlocksNum, this.gameObject.transform.position);
     }
 }

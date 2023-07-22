@@ -19,6 +19,11 @@ public class LockedGrid : GridBase
     public LockedState lockedState = LockedState.Locked;
     public BoxCollider boxCollider;
 
+    void Awake()
+    {
+        gridType = GridType.Locked;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
