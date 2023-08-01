@@ -6,9 +6,10 @@ Shader "Unlit/StencilBoard"
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType"="Transparent" }
         LOD 100
-
+        Blend SrcAlpha OneMinusSrcAlpha
+        // 这么写也没问题， 原理不用Stencil来实现，而是用了ZTest
         Pass
         {
             CGPROGRAM
@@ -50,7 +51,8 @@ Shader "Unlit/StencilBoard"
                 fixed4 col = tex2D(_MainTex, i.uv);
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
-                return col;
+                return half4(1,1,1,0.0f);
+                //return col;
             }
             ENDCG
         }

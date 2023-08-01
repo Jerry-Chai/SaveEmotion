@@ -154,6 +154,10 @@ public class GameManager : Singleton<GameManager>
         else 
         {
             isHitCount = true;
+            JointSpring hingeSpring = hinge.spring;
+            // 这个参数为了方便先写死，后面可以根据实际情况调整
+            hingeSpring.spring = 3000.0f;
+            hinge.spring = hingeSpring;
         }
 
         if (Input.GetKeyDown("j")) 
@@ -248,7 +252,7 @@ public class GameManager : Singleton<GameManager>
         Rigidbody ballRB = ball.GetComponent<Rigidbody>();
         ball.GetComponent<SphereCollider>().enabled = true;
         gameState = GameState.Start;
-        ballRB.velocity = new Vector3(1, 0, 1);
+        ballRB.velocity = new Vector3(100, 0, 100);
 
         if (loadNewLevel) 
         {

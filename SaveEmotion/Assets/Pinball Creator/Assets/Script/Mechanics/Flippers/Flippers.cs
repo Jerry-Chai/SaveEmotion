@@ -10,6 +10,8 @@ public class Flippers : MonoBehaviour {
 	[Header ("-> Choose between left or right flipper (only one)")]	
 	public bool 						b_Flipper_Left	= false;		// Left Flipper
 	public bool 						b_Flipper_Right	 = false;		// Right Flipper
+	public float 						flipper_spring	 = 1500;		// 回弹速度
+	public float 						flipper_Force	 = 3000;		// 发射速度
 
 	public HingeJoint 					hinge;							// access HingeJoint component
 
@@ -74,9 +76,10 @@ public class Flippers : MonoBehaviour {
 	public void  Update(){																	// --> Update
 		if(Activate){																	// if flipper is activate
 			JointSpring hingeSpring  = hinge.spring;								// Prevent Flipper stuck when flipper need to go back his init position
-			hingeSpring.spring = Random.Range(1.99f,2.01f);
-			hinge.spring = hingeSpring;
+			hingeSpring.spring = flipper_spring;
+			//hinge.spring = hingeSpring;
 			var motor = hinge.motor;	
+			
   
 			for (var i = 0; i < Input.touchCount; ++i) {							// --> Touch Screen part
 				if (Input.GetTouch(i).phase == TouchPhase.Began) {
@@ -131,7 +134,8 @@ public class Flippers : MonoBehaviour {
 				if(Input.GetKey(name_F) || b_touch){										// --> the player presses a button or presses a touch screen
 					hinge.motor = motor;													// move the flipper
 					hinge.useMotor = true;
-				}
+                    motor.force = flipper_Force;
+                }
 				else{																		// --> Flipper go to the init position.
 					motor = hinge.motor;													// move the flipper to reach the init position
 					hinge.motor = motor;
@@ -143,8 +147,9 @@ public class Flippers : MonoBehaviour {
 					motor = hinge.motor;													// move the flipper
 					hinge.motor = motor;
 					hinge.useMotor = true;
-  
-					if(!Down && Sfx_Flipper){
+                    motor.force = flipper_Force;
+
+                    if (!Down && Sfx_Flipper){
 						//Debug.Log ("Here");
 						source.volume = 1;
 						source.PlayOneShot(Sfx_Flipper);									// play a sound
