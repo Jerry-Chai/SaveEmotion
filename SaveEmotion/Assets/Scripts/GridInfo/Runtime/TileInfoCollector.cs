@@ -16,11 +16,15 @@ public class TileInfoCollector : MonoBehaviour
     public GameObject rootGO;
     
     public List<GameObject> prefabList;
-
+    public Texture2D backgroundImage;
     public Dictionary<string, GameObject> prefabDic;
+
+    private int bgTex_Height;
+    private int bgTex_Width;
     // Start is called before the first frame update
     void Start()
     {
+
         
     }
 
@@ -54,24 +58,48 @@ public class TileInfoCollector : MonoBehaviour
             Tilemap currTilemap = VARIABLE.gameObject.GetComponent<Tilemap>();
             if (!currTilemap) continue;
             Debug.Log(currTilemap.name);
-            
+
+            Vector3 upperLeftBound = new Vector3(int.MaxValue, int.MinValue, 0.0f);
+            Vector3 lowerRightBound = new Vector3(int.MinValue, int.MaxValue, 0.0f);
             foreach (var pos in currTilemap.cellBounds.allPositionsWithin)
             { 
                 
                 Vector3Int localPlace = new Vector3Int(pos.x, pos.y, pos.z);
-                //Vector3 place = tilemap.CellToWorld(localPlace);
+                upperLeftBound.x = upperLeftBound.x > localPlace.x ? localPlace.x : upperLeftBound.x;
+                upperLeftBound.y = upperLeftBound.y < localPlace.y ? localPlace.y : upperLeftBound.y;
+
+                lowerRightBound.x = lowerRightBound.x < localPlace.x ? localPlace.x : lowerRightBound.x;
+                lowerRightBound.y = lowerRightBound.y > localPlace.y ? localPlace.y : lowerRightBound.y;
+
+            }
+
+
+            foreach (var pos in currTilemap.cellBounds.allPositionsWithin)
+            {
+                Vector3Int localPlace = new Vector3Int(pos.x, pos.y, pos.z);
                 if (currTilemap.HasTile(localPlace))
                 {
+                    // texture uv convertion
+                    int x = Mathf.FloorToInt((localPlace.x - upperLeftBound.x) / (lowerRightBound.x - upperLeftBound.x) * backgroundImage.width);
+                    int z = Mathf.FloorToInt((localPlace.y - lowerRightBound.y) / (upperLeftBound.y - lowerRightBound.y)  * backgroundImage.height);
+
+                    Debug.Log(backgroundImage.GetPixel(x, z));
+
+
+                    UnityEngine.Color tempColor = backgroundImage.GetPixel(x, z);
                     var name = currTilemap.GetTile(localPlace).name;
-                    Debug.Log(localPlace + "," + name);
+                    //Debug.Log(localPlace + "," + name);
                     //tileWorldLocations.Add(place);
-                    GeneratePrefab(localPlace, name, gridSize);
+                    GeneratePrefab(localPlace, name, gridSize, tempColor);
                 }
             }
+
+            Debug.Log("upperLeftBound : " + upperLeftBound);
+            Debug.Log("lowerRightBound : " + lowerRightBound);
         }
     }
 
-    public void GeneratePrefab(Vector3Int localPlace, string name, float scale)
+    public void GeneratePrefab(Vector3Int localPlace, string name, float scale, UnityEngine.Color color)
     {
         if (!prefabDic.ContainsKey(name)) return;
         // 分成 0 列和第一列， 这两列排布是不一样的
@@ -92,6 +120,16 @@ public class TileInfoCollector : MonoBehaviour
         GameObject tempObj = Instantiate(prefabDic[name]);
         tempObj.transform.parent = rootGO.transform;
         tempObj.transform.localPosition = tempPos;
+
+
+        MeshRenderer renderer = tempObj.GetComponentInChildren<MeshRenderer>();
+        MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
+
+        //Get a renderer component either of the own gameobject or of a child
+        //set the color property
+        propertyBlock.SetColor("_BaseColor", color);
+        //apply propertyBlock to renderer
+        renderer.SetPropertyBlock(propertyBlock);
     }
 }
 
