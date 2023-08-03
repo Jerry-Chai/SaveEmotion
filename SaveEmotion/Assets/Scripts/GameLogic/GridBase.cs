@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class GridBase : MonoBehaviour
 {
+    public MaterialPropertyBlock propertyBlock;
+    public Color baseColor;
     /// <summary>
-    /// gridType±íÊ¾µ±Ç°¸ñ×ÓµÄÀàĞÍ
+    /// gridTypeè¡¨ç¤ºå½“å‰æ ¼å­çš„ç±»å‹
     /// </summary>
     public enum GridType
     {

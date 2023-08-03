@@ -14,7 +14,7 @@ public class GridManager : Singleton<GridManager>
     private Bounds bricksBounds;
 
     /// <summary>
-    /// ÓÃÀ´¼ÇÂ¼³õÊ¼»¯µÄ¸ñ×ÓÊı¾İ
+    /// ç”¨æ¥è®°å½•åˆå§‹åŒ–çš„æ ¼å­æ•°æ®
     /// </summary>
     public Dictionary<int, GridBase> gridDic;
     public List<int> gridIDList;
@@ -26,7 +26,7 @@ public class GridManager : Singleton<GridManager>
         
 
         var bricksInfo = GetComponent<BricksSetter>();
-        bricksprefab = bricksInfo.bricksprefab;
+//        bricksprefab = bricksInfo.bricksprefab;
         upperLeft = bricksInfo.upperLeft;
         lowerRight = bricksInfo.lowerRight;
         // calculate Bounds:
@@ -54,7 +54,7 @@ public class GridManager : Singleton<GridManager>
     }
 
     /// <summary>
-    /// ÊÍ·Å¼¼ÄÜµÄÊ±ºòµ÷ÓÃ
+    /// é‡Šæ”¾æŠ€èƒ½çš„æ—¶å€™è°ƒç”¨
     /// </summary>
     /// <param name="pos"></param>
     /// <param name="_width"></param>
@@ -118,8 +118,8 @@ public class GridManager : Singleton<GridManager>
     }
 
     /// <summary>
-    /// Õâ¸öº¯ÊıÓÃÀ´´¦Àí£¬snall ¼¼ÄÜ´¥·¢µÄ¸ñ×Ó¸Ä±ä£¬´¥·¢ÁËÖ®ºó£¬¿´ÓĞ¶àÉÙ¸ö¸ñ×Ó£¬ÕâĞ©¸ñ×ÓÒÀ´Î±äÉ«¡£
-    /// ÖĞ¼äÓ¦¸Ã»¹»áĞèÒª¼ÓÈëÒ»Ğ©ÌØĞ§£¬ ÏÈÓÃgameobecetÀ´´¦Àí
+    /// è¿™ä¸ªå‡½æ•°ç”¨æ¥å¤„ç†ï¼Œsnall æŠ€èƒ½è§¦å‘çš„æ ¼å­æ”¹å˜ï¼Œè§¦å‘äº†ä¹‹åï¼Œçœ‹æœ‰å¤šå°‘ä¸ªæ ¼å­ï¼Œè¿™äº›æ ¼å­ä¾æ¬¡å˜è‰²ã€‚
+    /// ä¸­é—´åº”è¯¥è¿˜ä¼šéœ€è¦åŠ å…¥ä¸€äº›ç‰¹æ•ˆï¼Œ å…ˆç”¨gameobecetæ¥å¤„ç†
     /// </summary>
     /// <param name=""></param>
     /// <param name=""></param>
@@ -163,7 +163,7 @@ public class GridManager : Singleton<GridManager>
 
 #endif
     /// <summary>
-    /// Õâ¸ö½Ó¿ÚÖ÷ÒªÊÇ¸øÎÏÅ£Ê¹ÓÃµÄ£¬ ¸æËßÎÏÅ£Ò»¸ö¿ÉÒÔĞĞ½øµÄµØ·½£¬Õâ¸öµØ·½ÊÇËùÓĞ¸ñ×ÓÀïÃæËæ»úµÄÒ»¸ö¡£
+    /// è¿™ä¸ªæ¥å£ä¸»è¦æ˜¯ç»™èœ—ç‰›ä½¿ç”¨çš„ï¼Œ å‘Šè¯‰èœ—ç‰›ä¸€ä¸ªå¯ä»¥è¡Œè¿›çš„åœ°æ–¹ï¼Œè¿™ä¸ªåœ°æ–¹æ˜¯æ‰€æœ‰æ ¼å­é‡Œé¢éšæœºçš„ä¸€ä¸ªã€‚
     /// </summary>
     public Vector3 GetRandomGrid() 
     {

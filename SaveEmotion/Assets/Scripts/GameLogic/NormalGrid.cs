@@ -13,7 +13,7 @@ public class NormalGrid : GridBase
 
 
     //The material property block we pass to the GPU
-    private MaterialPropertyBlock propertyBlock;
+
     public Color activateColor;
     public Color deactivateColor;
     private Renderer renderer;
@@ -37,8 +37,15 @@ public class NormalGrid : GridBase
     {
         base.Start();
         //create propertyblock only if none exists
+        renderer = GetComponentInChildren<MeshRenderer>();
         if (propertyBlock == null)
+        {
             propertyBlock = new MaterialPropertyBlock();
+           
+        }
+        // //apply propertyBlock to renderer
+        propertyBlock.SetColor("_BaseColor", baseColor);
+        renderer.SetPropertyBlock(propertyBlock);
     }
 
     // Update is called once per frame
@@ -50,9 +57,9 @@ public class NormalGrid : GridBase
     public override void OnTriggerEnter(Collider other)
     {
         base.OnTriggerEnter(other);
-        Debug.Log("NormalGrid OnTriggerEnter");
         if (other.tag == "Ball")
         {
+            Debug.Log("Ball Hit this block");
             if (gridState == NormalGridLockState.Unlocked) return;
             //Debug.Log("Test!");
             UnlockThisGrid();
@@ -70,21 +77,21 @@ public class NormalGrid : GridBase
 
     public void UnlockThisGrid() 
     {
-        gridState = NormalGridLockState.Unlocked;
-        //Get a renderer component either of the own gameobject or of a child
-        //set the color property
-        propertyBlock.SetColor("_BaseColor", deactivateColor);
-        //apply propertyBlock to renderer
-        renderer.SetPropertyBlock(propertyBlock);
+        // gridState = NormalGridLockState.Unlocked;
+        // //Get a renderer component either of the own gameobject or of a child
+        // //set the color property
+        // propertyBlock.SetColor("_BaseColor", deactivateColor);
+        // //apply propertyBlock to renderer
+        // renderer.SetPropertyBlock(propertyBlock);
     }
 
     public void LockThisGrid()
     {
-        gridState = NormalGridLockState.Locked;
-        //Get a renderer component either of the own gameobject or of a child
-        //set the color property
-        propertyBlock.SetColor("_BaseColor", activateColor);
-        //apply propertyBlock to renderer
-        renderer.SetPropertyBlock(propertyBlock);
+        // gridState = NormalGridLockState.Locked;
+        // //Get a renderer component either of the own gameobject or of a child
+        // //set the color property
+        // propertyBlock.SetColor("_BaseColor", activateColor);
+        // //apply propertyBlock to renderer
+        // renderer.SetPropertyBlock(propertyBlock);
     }
 }

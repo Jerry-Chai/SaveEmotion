@@ -1,4 +1,4 @@
-Shader "Unlit/StencilBoard"
+Shader "Unlit/NewUnlitShader"
 {
     Properties
     {
@@ -7,21 +7,16 @@ Shader "Unlit/StencilBoard"
     }
     SubShader
     {
-       Tags { "Queue"="Geometry-150" }
+        Tags { "RenderType"="Opaque" }
         LOD 100
-
+        Stencil
+        {
+            Ref 0
+            Comp Equal
+            Pass Keep
+        }
         Pass
         {
-
-            Zwrite Off
-            Stencil
-            {
-                Ref 1
-                Comp Always
-                Pass Replace
-            }
-            //cull off
-            ColorMask 0
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -60,10 +55,9 @@ Shader "Unlit/StencilBoard"
             {
                 // sample the texture
                 fixed4 col = tex2D(_MainTex, i.uv);
-                //col *= _BaseColor;
+                col *= _BaseColor;
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
-                //return half4(1,1,1,0.0f);
                 return col;
             }
             ENDCG

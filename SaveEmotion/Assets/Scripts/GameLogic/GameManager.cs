@@ -155,7 +155,7 @@ public class GameManager : Singleton<GameManager>
         {
             isHitCount = true;
             JointSpring hingeSpring = hinge.spring;
-            // 这个参数为了方便先写死，后面可以根据实际情况调整
+            // 杩欎釜鍙傛暟涓轰簡鏂逛究鍏堝啓姝伙紝鍚庨潰鍙互鏍规嵁瀹為檯鎯呭喌璋冩暣
             hingeSpring.spring = 3000.0f;
             hinge.spring = hingeSpring;
         }
