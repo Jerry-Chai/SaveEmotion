@@ -14,13 +14,13 @@ Shader "Unlit/StencilBoard"
         {
 
             Zwrite Off
-            Stencil
-            {
-                Ref 1
-                Comp Always
-                Pass Replace
-            }
-            //cull off
+//            Stencil
+//            {
+//                Ref 1
+//                Comp Always
+//                Pass Replace
+//            }
+            cull front
             ColorMask 0
             CGPROGRAM
             #pragma vertex vert

@@ -7,6 +7,7 @@ using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
+using Color = UnityEngine.Color;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -19,7 +20,9 @@ public class TileInfoCollector : MonoBehaviour
     public Texture2D backgroundImage;
     public Dictionary<string, GameObject> prefabDic;
 
-    private int bgTex_Height;
+    public Color colorDiff;
+    
+    private int bgTex_Heigh;
     private int bgTex_Width;
     // Start is called before the first frame update
     void Start()
@@ -119,7 +122,7 @@ public class TileInfoCollector : MonoBehaviour
 
 
                 UnityEngine.Color tempColor = backgroundImage.GetPixel(z, x);
-                    
+                tempColor *= colorDiff;
                 temp_propertyBlock.SetColor("_BaseColor", tempColor);
                 obj.GetComponent<GridBase>().baseColor = tempColor;
                 //apply propertyBlock to renderer
