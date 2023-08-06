@@ -10,7 +10,7 @@ public class Flippers : MonoBehaviour {
 	[Header ("-> Choose between left or right flipper (only one)")]	
 	public bool 						b_Flipper_Left	= false;		// Left Flipper
 	public bool 						b_Flipper_Right	 = false;		// Right Flipper
-	public float 						flipper_spring	 = 1500;		// 回弹速度
+	public float 						flipper_spring	 = 3500;		// 回弹速度
 	public float 						flipper_Force	 = 3000;		// 发射速度
 
 	public HingeJoint 					hinge;							// access HingeJoint component

@@ -34,6 +34,10 @@ public class SnallBehaviour : MonoBehaviour
     private Vector3 originalPos;
     private float totalDistance;
     private float currDistance;
+
+    public Animator animator;
+    public Vector2 moveDir;
+
     void Start()
     {
        
@@ -42,6 +46,8 @@ public class SnallBehaviour : MonoBehaviour
 
         idleTimer = idleTime;
         defendTimer = defendTime;
+    
+        animator =  GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -57,6 +63,7 @@ public class SnallBehaviour : MonoBehaviour
             idleTimer = idleTime;
         }
 
+        
         if (state == SnallState.DetermineMove) 
         {
             nextPos = DetermineNextPos();
@@ -66,7 +73,9 @@ public class SnallBehaviour : MonoBehaviour
             currDistance = 0.0f;
         }
 
+        // 移动状态
         float distance = Vector3.Distance(this.transform.position, nextPos);
+        moveDir = new Vector2(nextPos.x - this.transform.position.x, nextPos.z - this.transform.position.z).normalized;
         if (state == SnallState.Move && distance >= 0.01f)
         {
             currDistance += speed * Time.deltaTime;
@@ -78,6 +87,8 @@ public class SnallBehaviour : MonoBehaviour
             state = SnallState.Defend;
         }
 
+        // 防御状态
+        // 这个地方感觉可以设置一下， 蜗牛从移动到进入防御时间，应该有一个间隔
         if (state == SnallState.Defend && defendTimer >= 0)
         {
             defendTimer -= Time.deltaTime;

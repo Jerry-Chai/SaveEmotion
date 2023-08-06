@@ -10,6 +10,7 @@ Shader "Unlit/NewUnlitShader"
 
         [HDR]_Emission ("_Emission", Color) =(0,0,0,0)
         _EdgeWidth ("_EdgeWidth", Float) = 2.0
+        _DissolveDirection ("_DissolveDirection", Vector) = (0,0,0,0)
     }
     SubShader
     {
@@ -54,6 +55,7 @@ Shader "Unlit/NewUnlitShader"
             float4 _NoiseTexture_ST;
             float4 _BaseColor;
             float4 _Emission;
+            float4 _DissolveDirection;
 
             v2f vert (appdata v)
             {
@@ -67,9 +69,14 @@ Shader "Unlit/NewUnlitShader"
             fixed4 frag (v2f i) : SV_Target
             {
                 // sample the texture
+                float2 uvToCenter = i.uv - 0.5f;
+                uvToCenter = uvToCenter * 2.0f;
                 fixed4 col = tex2D(_MainTex, i.uv);
-                float currPos = (i.uv.x + i.uv.y) + 1.0f;
-                currPos *= 100.0f;
+                // negative _DissolveDirection beacause of bricks orintation
+                float currPos = dot(-_DissolveDirection.xy, uvToCenter);
+                // to 0 - 1;
+                currPos = (currPos + 1) /2.0f;
+                currPos *= 200.0f;
                 float2 noiseUV = i.uv * _NoiseTexture_ST.xy + _NoiseTexture_ST.zw;
                 half4 noiseTex =  tex2D(_NoiseTexture, noiseUV) * 50.0f;
                 half alpha = currPos - noiseTex - _ControlValue;

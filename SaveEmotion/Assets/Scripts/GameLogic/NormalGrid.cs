@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class NormalGrid : GridBase
@@ -63,7 +65,7 @@ public class NormalGrid : GridBase
             if (gridState == NormalGridLockState.Unlocked) return;
             //Debug.Log("Test!");
             UnlockThisGrid();
-            GameManager.Instance.UpdateBrickNum(-1);
+            //GameManager.Instance.UpdateBrickNum(-1);
         }
         else if (other.CompareTag("Boss")) 
         {
@@ -77,21 +79,48 @@ public class NormalGrid : GridBase
 
     public void UnlockThisGrid() 
     {
-        // gridState = NormalGridLockState.Unlocked;
-        // //Get a renderer component either of the own gameobject or of a child
-        // //set the color property
-        // propertyBlock.SetColor("_BaseColor", deactivateColor);
-        // //apply propertyBlock to renderer
-        // renderer.SetPropertyBlock(propertyBlock);
+        gridState = NormalGridLockState.Unlocked;
+        //Get a renderer component either of the own gameobject or of a child
+        //set the color property
+        Vector2 ballDir = GameManager.Instance.ballScript.ballDir;
+        StartCoroutine(Dissolve(0, 200, 2, ballDir));
+        //propertyBlock.SetColor("_BaseColor", deactivateColor);
+        //apply propertyBlock to renderer
+        //renderer.SetPropertyBlock(propertyBlock);
+    }
+    
+
+    /// <summary>
+    /// 假设shader中的数值为200， 这边直接做一个硬算
+    /// </summary>
+    /// <param name="fromValue"></param>
+    /// <param name="toValue"></param>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    public IEnumerator Dissolve(float fromValue, float toValue, float time, Vector2 objDir)
+    {
+        float change = toValue - fromValue;
+        change /= time;
+        float dissove = fromValue;
+        
+        propertyBlock.SetVector("_DissolveDirection", objDir); 
+        while (time >= 0.0f)
+        {
+            time -= Time.deltaTime;
+            dissove += Time.deltaTime * change;
+            propertyBlock.SetFloat("_ControlValue", dissove);
+            renderer.SetPropertyBlock(propertyBlock);
+            yield return null;
+        }
     }
 
     public void LockThisGrid()
     {
-        // gridState = NormalGridLockState.Locked;
-        // //Get a renderer component either of the own gameobject or of a child
-        // //set the color property
-        // propertyBlock.SetColor("_BaseColor", activateColor);
-        // //apply propertyBlock to renderer
-        // renderer.SetPropertyBlock(propertyBlock);
+        gridState = NormalGridLockState.Locked;
+        //Get a renderer component either of the own gameobject or of a child
+        //set the color property
+        Vector2 snallDir = GameManager.Instance.snallBehaviour.moveDir;
+        StartCoroutine(Dissolve(200, 0 , 2, snallDir));
+        //apply propertyBlock to renderer
     }
 }

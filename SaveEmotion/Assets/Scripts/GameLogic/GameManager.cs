@@ -41,6 +41,7 @@ public class GameManager : Singleton<GameManager>
     public GameObject ball_prefab;
     public GameObject ball;
     public GameObject ballInitPosGo;
+    public Ball ballScript;
 
 
     public GameState gameState;
@@ -76,6 +77,10 @@ public class GameManager : Singleton<GameManager>
     public int currentEnergy = 0;
 
 
+    [Header("Snall Info")]
+    public GameObject snall;
+    public SnallBehaviour snallBehaviour;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -101,6 +106,10 @@ public class GameManager : Singleton<GameManager>
         loadNewLevel = true;
         startCountDown = false;
         currSpentTime = currLevelPlayTime;
+
+        snall = GameObject.Find("Snall");
+        snallBehaviour = snall.GetComponent<SnallBehaviour>();
+        
     }
 
     // Update is called once per frame
@@ -231,7 +240,7 @@ public class GameManager : Singleton<GameManager>
         ball_instance.name = "ball_instance";
         ball_instance.SetActive(true);
         ball = ball_instance;
-
+        ballScript = ball.GetComponent<Ball>();
         while (gameState == GameState.NeedToReset || gameState == GameState.Inited)
         {
             ball.GetComponent<SphereCollider>().enabled = false;
