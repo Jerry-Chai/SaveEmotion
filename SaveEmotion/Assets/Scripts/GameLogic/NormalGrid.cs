@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -64,6 +65,7 @@ public class NormalGrid : GridBase
             Debug.Log("Ball Hit this block");
             if (gridState == NormalGridLockState.Unlocked) return;
             //Debug.Log("Test!");
+            StopCoroutine("Dissolve");
             UnlockThisGrid();
             //GameManager.Instance.UpdateBrickNum(-1);
         }
@@ -83,7 +85,9 @@ public class NormalGrid : GridBase
         //Get a renderer component either of the own gameobject or of a child
         //set the color property
         Vector2 ballDir = GameManager.Instance.ballScript.ballDir;
-        StartCoroutine(Dissolve(0, 200, 2, ballDir));
+        //StopCoroutine("Dissolve");
+        //StartCoroutine(Dissolve(0, 200, 2, ballDir));
+        AsyncDissolve(0, 200, 2, ballDir);
         //propertyBlock.SetColor("_BaseColor", deactivateColor);
         //apply propertyBlock to renderer
         //renderer.SetPropertyBlock(propertyBlock);
@@ -91,7 +95,7 @@ public class NormalGrid : GridBase
     
 
     /// <summary>
-    /// ¼ÙÉèshaderÖĞµÄÊıÖµÎª200£¬ Õâ±ßÖ±½Ó×öÒ»¸öÓ²Ëã
+    /// å‡è®¾shaderä¸­çš„æ•°å€¼ä¸º200ï¼Œ è¿™è¾¹ç›´æ¥åšä¸€ä¸ªç¡¬ç®—
     /// </summary>
     /// <param name="fromValue"></param>
     /// <param name="toValue"></param>
@@ -103,7 +107,7 @@ public class NormalGrid : GridBase
         change /= time;
         float dissove = fromValue;
         
-        propertyBlock.SetVector("_DissolveDirection", objDir); 
+        propertyBlock.SetVector("_DissolveDirection", objDir);
         while (time >= 0.0f)
         {
             time -= Time.deltaTime;
@@ -113,14 +117,37 @@ public class NormalGrid : GridBase
             yield return null;
         }
     }
+    
+    async void AsyncDissolve(float fromValue, float toValue, float time, Vector2 objDir)
+    {
+        Debug.Log("Async Task Started");
+        float change = toValue - fromValue;
+        change /= time;
+        float dissove = fromValue;
+        
+        propertyBlock.SetVector("_DissolveDirection", objDir);
+        while (time >= 0.0f)
+        {
+            time -= Time.deltaTime;
+            dissove += Time.deltaTime * change;
+            propertyBlock.SetFloat("_ControlValue", dissove);
+            renderer.SetPropertyBlock(propertyBlock);
+            await Task.Yield();
+        }
+        // This task will finish, even though it's object is destroyed
+        Debug.Log("Async Task Ended");
+        
+    }
 
     public void LockThisGrid()
     {
         gridState = NormalGridLockState.Locked;
         //Get a renderer component either of the own gameobject or of a child
         //set the color property
+        //StopCoroutine("Dissolve");
         Vector2 snallDir = GameManager.Instance.snallBehaviour.moveDir;
-        StartCoroutine(Dissolve(200, 0 , 2, snallDir));
+        //StartCoroutine(Dissolve(200, 0 , 2, snallDir));
+        AsyncDissolve(200, -15 , 2, snallDir);
         //apply propertyBlock to renderer
     }
 }

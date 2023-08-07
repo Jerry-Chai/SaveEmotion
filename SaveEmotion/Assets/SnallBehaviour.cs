@@ -48,6 +48,7 @@ public class SnallBehaviour : MonoBehaviour
         defendTimer = defendTime;
     
         animator =  GetComponent<Animator>();
+        moveDir = new Vector2(0.0f, 0.0f);
     }
 
     // Update is called once per frame
@@ -75,7 +76,7 @@ public class SnallBehaviour : MonoBehaviour
 
         // ÒÆ¶¯×´Ì¬
         float distance = Vector3.Distance(this.transform.position, nextPos);
-        moveDir = new Vector2(nextPos.x - this.transform.position.x, nextPos.z - this.transform.position.z).normalized;
+        moveDir = new Vector2(-(nextPos.x - this.transform.position.x), nextPos.z - this.transform.position.z).normalized;
         if (state == SnallState.Move && distance >= 0.01f)
         {
             currDistance += speed * Time.deltaTime;

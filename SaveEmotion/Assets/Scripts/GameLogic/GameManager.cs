@@ -94,18 +94,18 @@ public class GameManager : Singleton<GameManager>
 
         BodyFlipperDiff = Body.transform.position - flipperConnectedBody.transform.position;
 
-        totalBricksNum = GameObject.Find("GridBase").transform.childCount;
-        currBricksNum = totalBricksNum;
+        //totalBricksNum = GameObject.Find("GridBase").transform.childCount;
+        //currBricksNum = totalBricksNum;
         //if (gameState == GameState.Init)
         //{
         //    StartCoroutine("WaitForShoot");
         //}
 
-        level = GameObject.Find("LevelData").GetComponent<GameInfoContainer>().levelData;
-        LoadLevel(levelName[0]);
-        loadNewLevel = true;
-        startCountDown = false;
-        currSpentTime = currLevelPlayTime;
+        // level = GameObject.Find("LevelData").GetComponent<GameInfoContainer>().levelData;
+        // LoadLevel(levelName[0]);
+        // loadNewLevel = true;
+        // startCountDown = false;
+        // currSpentTime = currLevelPlayTime;
 
         snall = GameObject.Find("Snall");
         snallBehaviour = snall.GetComponent<SnallBehaviour>();
