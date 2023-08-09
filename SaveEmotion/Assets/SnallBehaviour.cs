@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -139,5 +140,10 @@ public class SnallBehaviour : MonoBehaviour
     public void TrigerSnallSkill(int revertBlockNum) 
     {
         GridManager.Instance.LockGridBySnallSkill(revertBlocksNum, this.gameObject.transform.position);
+
+        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.transform.localScale = new Vector3(3.0f, 3.0f, 3.0f);
+        sphere.transform.position = this.transform.position;
+        sphere.transform.DOJump(new Vector3(20, 20, 0), 5, 1, 1.0f);
     }
 }
