@@ -254,7 +254,7 @@ public class UIButtons : MonoBehaviour {
 
 	public void ShowRewardedAd()
 	{
-		const string RewardedPlacementId = "rewardedVideo";
+		//const string RewardedPlacementId = "rewardedVideo";
 
 		#if UNITY_ADS
 		if (!Advertisement.IsReady(RewardedPlacementId))

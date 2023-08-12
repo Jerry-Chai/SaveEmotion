@@ -11,9 +11,11 @@ public class SnallBehaviour : MonoBehaviour
         DetermineMove,
         Move,
         Defend,
-        Idle
-
+        Idle,
+        ShootSkill
     }
+
+
     public SnallState state;
     public float speed = 0.01f;
     public float moveMinRange;
@@ -28,9 +30,12 @@ public class SnallBehaviour : MonoBehaviour
     
     public float idleTime = 3.0f;
     public float defendTime = 3.0f;
+    public float shootTime = 5.0f;
+    public float shootObjectTime = 3.0f;
 
     private float idleTimer = 0.0f;
     private float defendTimer = 0.0f;
+    private float shootTimer = 0.0f;
     private Vector3 nextPos;
     private Vector3 originalPos;
     private float totalDistance;
@@ -39,22 +44,48 @@ public class SnallBehaviour : MonoBehaviour
     public Animator animator;
     public Vector2 moveDir;
 
+    public SnallState lastState;
+
+    private float originalZ;
+    private bool shoottedInThisLoop = false;
     void Start()
     {
        
         distanceRatioToStopPoint = 1.0f;
         state = SnallState.Idle;
-
+        lastState = state;
         idleTimer = idleTime;
         defendTimer = defendTime;
+        shootTimer = shootTime;
     
         animator =  GetComponent<Animator>();
+        animator.SetTrigger("Idle");
         moveDir = new Vector2(0.0f, 0.0f);
+        originalZ = this.transform.position.z;
+
+        shoottedInThisLoop = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (lastState != state)
+        {
+            lastState = state;
+            switch (state)
+            {
+                case SnallState.Defend:
+                    animator.SetTrigger("Defend");
+                    break;
+                case SnallState.Move:
+                    animator.SetTrigger("Move");
+                    break;
+                case SnallState.ShootSkill:
+                    animator.SetTrigger("ShootSkill");
+                    break;
+            }
+        }
+
         if (state == SnallState.Idle && idleTimer >= 0) 
         {
             idleTimer -= Time.deltaTime;
@@ -71,6 +102,8 @@ public class SnallBehaviour : MonoBehaviour
             nextPos = DetermineNextPos();
             state = SnallState.Move;
             originalPos = this.transform.position;
+            originalPos.z = originalZ;
+            nextPos.z = originalZ;
             totalDistance = Vector3.Distance(originalPos, nextPos);
             currDistance = 0.0f;
         }
@@ -97,11 +130,26 @@ public class SnallBehaviour : MonoBehaviour
         }
         else if (state == SnallState.Defend && defendTimer < 0)
         {
-            state = SnallState.Idle;
-            TrigerSnallSkill(revertBlocksNum);
+            state = SnallState.ShootSkill;
             defendTimer = defendTime;
         }
-        
+
+        if (state == SnallState.ShootSkill && shootTimer >= 0)
+        {
+            shootTimer -= Time.deltaTime;
+        }
+        else if (state == SnallState.ShootSkill && shootTimer <= shootObjectTime && shoottedInThisLoop)
+        {
+            shoottedInThisLoop = true;
+            TrigerSnallSkill(revertBlocksNum);
+        }
+        else if (state == SnallState.ShootSkill && shootTimer < 0)
+        {
+            state = SnallState.Idle;
+            defendTimer = defendTime;
+            shoottedInThisLoop = false;
+        }
+
     }
 
     public Vector3 DetermineNextPos()
