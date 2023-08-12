@@ -46,7 +46,7 @@ public class SnallBehaviour : MonoBehaviour
 
     public SnallState lastState;
 
-    private float originalZ;
+    private float originalY;
     private bool shoottedInThisLoop = false;
     void Start()
     {
@@ -61,7 +61,7 @@ public class SnallBehaviour : MonoBehaviour
         animator =  GetComponent<Animator>();
         animator.SetTrigger("Idle");
         moveDir = new Vector2(0.0f, 0.0f);
-        originalZ = this.transform.position.z;
+        originalY = this.transform.position.y;
 
         shoottedInThisLoop = false;
     }
@@ -102,8 +102,8 @@ public class SnallBehaviour : MonoBehaviour
             nextPos = DetermineNextPos();
             state = SnallState.Move;
             originalPos = this.transform.position;
-            originalPos.z = originalZ;
-            nextPos.z = originalZ;
+            originalPos.y = originalY;
+            nextPos.y = originalY;
             totalDistance = Vector3.Distance(originalPos, nextPos);
             currDistance = 0.0f;
         }
