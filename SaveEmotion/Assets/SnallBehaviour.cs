@@ -47,7 +47,7 @@ public class SnallBehaviour : MonoBehaviour
     public SnallState lastState;
 
     private float originalY;
-    private bool shoottedInThisLoop = false;
+    public bool shoottedInThisLoop = false;
     void Start()
     {
        
@@ -99,6 +99,7 @@ public class SnallBehaviour : MonoBehaviour
         
         if (state == SnallState.DetermineMove) 
         {
+            // 这个地方，最好做一个限制，太近的地方会影响技能释放的时间
             nextPos = DetermineNextPos();
             state = SnallState.Move;
             originalPos = this.transform.position;
@@ -138,8 +139,10 @@ public class SnallBehaviour : MonoBehaviour
         {
             shootTimer -= Time.deltaTime;
         }
-        else if (state == SnallState.ShootSkill && shootTimer <= shootObjectTime && shoottedInThisLoop)
+        
+        if (state == SnallState.ShootSkill && shootTimer <= shootObjectTime && !shoottedInThisLoop)
         {
+            Debug.Log("Trigger Skill");
             shoottedInThisLoop = true;
             TrigerSnallSkill(revertBlocksNum);
         }
@@ -148,6 +151,7 @@ public class SnallBehaviour : MonoBehaviour
             state = SnallState.Idle;
             defendTimer = defendTime;
             shoottedInThisLoop = false;
+            shootTimer = shootTime;
         }
 
     }
@@ -190,6 +194,7 @@ public class SnallBehaviour : MonoBehaviour
         GridManager.Instance.LockGridBySnallSkill(revertBlocksNum, this.gameObject.transform.position);
 
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.name = "Special Effect";
         sphere.transform.localScale = new Vector3(3.0f, 3.0f, 3.0f);
         sphere.transform.position = this.transform.position;
         sphere.transform.DOJump(new Vector3(20, 20, 0), 5, 1, 1.0f);
