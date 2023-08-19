@@ -1,10 +1,14 @@
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class SnallBehaviour : MonoBehaviour
 {
+    public GameObject EffectPrefab;
+
 
     public enum SnallState
     {
@@ -48,6 +52,9 @@ public class SnallBehaviour : MonoBehaviour
 
     private float originalY;
     public bool shoottedInThisLoop = false;
+
+    public int shootSkillNum = 6;
+    public List<GameObject> shootPos = new List<GameObject>();
     void Start()
     {
        
@@ -191,12 +198,46 @@ public class SnallBehaviour : MonoBehaviour
 
     public void TrigerSnallSkill(int revertBlockNum) 
     {
-        GridManager.Instance.LockGridBySnallSkill(revertBlocksNum, this.gameObject.transform.position);
+        if (GridManager.Instance.UnlockedNormalGridDic.Count <= 0) 
+        {
+            // 说明没有可以释放的地方了， 放空炮
+            for (int i = 0; i < shootSkillNum; i++) 
+            {
+                int index = i >= shootPos.Count ? i : shootPos.Count - 1;
+                GameObject sphere = Instantiate(EffectPrefab);
+                sphere.name = "Special Effect";
+                sphere.transform.localScale = new Vector3(3.0f, 3.0f, 3.0f);
+                sphere.transform.position = this.transform.position;
+                sphere.transform.DOJump(shootPos[i].transform.position, 5, 1, 1.0f).OnComplete(() =>
+                {
+                    //script.LockThisGrid();
+                    Destroy(sphere);
+                });
 
-        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        sphere.name = "Special Effect";
-        sphere.transform.localScale = new Vector3(3.0f, 3.0f, 3.0f);
-        sphere.transform.position = this.transform.position;
-        sphere.transform.DOJump(new Vector3(20, 20, 0), 5, 1, 1.0f);
+            }
+        
+        }
+        for (int i = 0; i < shootSkillNum; i++) 
+        {
+            //GridManager.Instance.LockGridBySnallSkill(revertBlocksNum, this.gameObject.transform.position);
+            GameObject sphere = Instantiate(EffectPrefab);
+            sphere.name = "Special Effect";
+            var script = GridManager.Instance.GetRandomUnlockedGrid();
+            Debug.Log("Index "+ i + " : " +script.gameObject.GetInstanceID());
+            if(script == null)
+            {
+                // 如果有一个没回传， 说明后面的所有都不会回传
+                return;
+            }
+            sphere.transform.localScale = new Vector3(3.0f, 3.0f, 3.0f);
+            sphere.transform.position = this.transform.position;
+            sphere.transform.DOJump(script.transform.position, 5, 1, 1.0f).OnComplete(() => 
+            {
+                Vector2 dir = new Vector2(-(script.transform.position.x - this.transform.position.x), -(script.transform.position.z - this.transform.position.z)).normalized;
+                script.LockThisGridBySnallSkill(dir);
+                Destroy(sphere);
+            });
+        }
+
     }
 }

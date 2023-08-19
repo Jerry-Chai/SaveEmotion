@@ -33,7 +33,7 @@ public class NormalGrid : GridBase
 
     void Awake()
     {
-        gridType = GridType.Normal;
+        gridType = GridType.NormalGrid;
     }
     // Start is called before the first frame update
     public void Start()
@@ -128,6 +128,7 @@ public class NormalGrid : GridBase
         propertyBlock.SetVector("_DissolveDirection", objDir);
         while (time >= 0.0f)
         {
+            Debug.Log("Async Task Running");
             time -= Time.deltaTime;
             dissove += Time.deltaTime * change;
             propertyBlock.SetFloat("_ControlValue", dissove);
@@ -136,7 +137,17 @@ public class NormalGrid : GridBase
         }
         // This task will finish, even though it's object is destroyed
         Debug.Log("Async Task Ended");
-        
+        //GridManager.
+        //lock
+        if (fromValue > toValue)
+        {
+            GridManager.Instance.LockNormalGrid(this.gameObject.GetInstanceID(), this);
+        }
+        else 
+        {
+            GridManager.Instance.UnlockNormalGrid(this.gameObject.GetInstanceID(), this);
+
+        }
     }
 
     public void LockThisGrid()
@@ -148,6 +159,17 @@ public class NormalGrid : GridBase
         Vector2 snallDir = GameManager.Instance.snallBehaviour.moveDir;
         //StartCoroutine(Dissolve(200, 0 , 2, snallDir));
         AsyncDissolve(200, -15 , 2, snallDir);
+        //apply propertyBlock to renderer
+    }
+
+    public void LockThisGridBySnallSkill(Vector2 dir)
+    {
+        gridState = NormalGridLockState.Locked;
+        //Get a renderer component either of the own gameobject or of a child
+        //set the color property
+        //StopCoroutine("Dissolve");
+        //StartCoroutine(Dissolve(200, 0 , 2, snallDir));
+        AsyncDissolve(200, -15, 2, dir);
         //apply propertyBlock to renderer
     }
 }

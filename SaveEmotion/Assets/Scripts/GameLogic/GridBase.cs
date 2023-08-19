@@ -10,10 +10,11 @@ public class GridBase : MonoBehaviour
     /// <summary>
     /// gridType表示当前格子的类型
     /// </summary>
+    /// 这个地方应该有问题。。。 NormalGrid指的是普通可以解锁的格子， 并且它初始化的时候有解锁和没解锁两种，
     public enum GridType
     {
-        Normal,
-        Locked,
+        NormalGrid,
+        IcedGrid,
         Unlocked,
     }
 

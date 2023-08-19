@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.TerrainTools;
 using UnityEngine;
@@ -16,7 +17,9 @@ public class GridManager : Singleton<GridManager>
     /// <summary>
     /// 用来记录初始化的格子数据
     /// </summary>
-    public Dictionary<int, GridBase> gridDic;
+    public Dictionary<int, GridBase> gridDic = new Dictionary<int, GridBase>();
+    public Dictionary<int, GridBase> LockedNormalGridDic = new Dictionary<int, GridBase>();
+    public Dictionary<int, GridBase> UnlockedNormalGridDic = new Dictionary<int, GridBase>();
     public List<int> gridIDList;
 
     // Start is called before the first frame update
@@ -113,6 +116,19 @@ public class GridManager : Singleton<GridManager>
         {
             gridIDList.Add(instanceID);
             gridDic[instanceID] = script;
+            if (script.gridType == GridBase.GridType.NormalGrid) 
+            {
+                var normalGrid = script as NormalGrid;
+                if (normalGrid.gridState == NormalGrid.NormalGridLockState.Locked)
+                {
+                    LockedNormalGridDic[instanceID] = script;
+                }
+                else
+                {
+                    UnlockedNormalGridDic[instanceID] = script;
+                }
+            }
+
         }
 
     }
@@ -135,6 +151,68 @@ public class GridManager : Singleton<GridManager>
         }
     }
 
+    /// <summary>
+    /// 这个接口主要是给蜗牛使用的， 告诉蜗牛一个可以行进的地方，这个地方是所有格子里面随机的一个。
+    /// </summary>
+    public Vector3 GetRandomGrid()
+    {
+        int nextIndex = UnityEngine.Random.Range(0, gridIDList.Count);
+        return gridDic[gridIDList[nextIndex]].gameObject.transform.position;
+    }
+
+    public NormalGrid GetRandomLockedGrid()
+    {
+        if (LockedNormalGridDic.Count <= 0) 
+        {
+            Debug.Log("No LockedNormalGridDic here...");
+            return null;
+        }
+        int nextIndex = UnityEngine.Random.Range(0, LockedNormalGridDic.Count);
+        var script = LockedNormalGridDic.ElementAt(nextIndex).Value as NormalGrid;
+        LockedNormalGridDic.Remove(LockedNormalGridDic.ElementAt(nextIndex).Key);
+        return script;
+    }
+
+    public NormalGrid GetRandomUnlockedGrid()
+    {
+        if (UnlockedNormalGridDic.Count <= 0)
+        {
+            Debug.Log("No UnlockedNormalGridDic here...");
+            return null;
+        }
+        int nextIndex = UnityEngine.Random.Range(0, UnlockedNormalGridDic.Count);
+        var script = UnlockedNormalGridDic.ElementAt(nextIndex).Value as NormalGrid;
+        UnlockedNormalGridDic.Remove(UnlockedNormalGridDic.ElementAt(nextIndex).Key);
+        return script;
+    }
+
+    public void LockNormalGrid(int instanceID, GridBase script)
+    {
+        if (UnlockedNormalGridDic.ContainsKey(instanceID))
+        {
+            UnlockedNormalGridDic.Remove(instanceID);
+        }
+
+        if (!LockedNormalGridDic.ContainsKey(instanceID))
+        {
+            LockedNormalGridDic[instanceID] = script;
+        }
+    }
+
+    public void UnlockNormalGrid(int instanceID, GridBase script)
+    {
+        if (LockedNormalGridDic.ContainsKey(instanceID))
+        {
+            LockedNormalGridDic.Remove(instanceID);
+        }        
+        
+        if (!UnlockedNormalGridDic.ContainsKey(instanceID))
+        {
+            UnlockedNormalGridDic[instanceID] = script;
+        }
+    }
+
+
 #if UNITY_EDITOR
     public void TestRegisterWork() 
     {
@@ -146,7 +224,7 @@ public class GridManager : Singleton<GridManager>
         foreach (var item in gridDic)
         {
             GridBase fatherScript = item.Value;
-            if (fatherScript.gridType == GridBase.GridType.Normal) 
+            if (fatherScript.gridType == GridBase.GridType.NormalGrid) 
             {
                 NormalGrid childScript = fatherScript as NormalGrid;
                 float randomValue = UnityEngine.Random.Range(0, 1f);
@@ -163,14 +241,7 @@ public class GridManager : Singleton<GridManager>
     }
 
 #endif
-    /// <summary>
-    /// 这个接口主要是给蜗牛使用的， 告诉蜗牛一个可以行进的地方，这个地方是所有格子里面随机的一个。
-    /// </summary>
-    public Vector3 GetRandomGrid() 
-    {
-        int nextIndex = UnityEngine.Random.Range(0, gridIDList.Count);
-        return gridDic[gridIDList[nextIndex]].gameObject.transform.position;
-    }
+
 }
 
 

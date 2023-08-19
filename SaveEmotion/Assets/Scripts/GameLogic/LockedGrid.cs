@@ -21,7 +21,7 @@ public class LockedGrid : GridBase
 
     void Awake()
     {
-        gridType = GridType.Locked;
+        gridType = GridType.IcedGrid;
     }
 
     // Start is called before the first frame update
