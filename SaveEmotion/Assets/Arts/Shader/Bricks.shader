@@ -19,7 +19,7 @@ Shader "Unlit/NewUnlitShader"
         Blend SrcAlpha OneMinusSrcAlpha 
         Stencil
         {
-            Ref 0
+            Ref 1
             Comp Equal
             Pass Keep
         }
