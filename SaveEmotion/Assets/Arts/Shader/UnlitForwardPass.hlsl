@@ -69,7 +69,7 @@ Varyings UnlitPassVertex(Attributes input)
     VertexPositionInputs vertexInput = GetVertexPositionInputs(input.positionOS.xyz);
 
     half3 worldPos = mul(UNITY_MATRIX_MV, float4(input.positionOS.xyz, 1.0)).xyz;
-    worldPos.y += sin(_Time.y * 0.3f + _WorldPos.x + _WorldPos.y) * 3.0;
+    worldPos.y += (sin(_Time.y * _TimeScale + _WorldPos.x + _WorldPos.y) * _MoveRange);
     output.positionCS = mul(UNITY_MATRIX_P, float4(worldPos.xyz, 1.0));
 
     output.uv = TRANSFORM_TEX(input.uv, _BaseMap);

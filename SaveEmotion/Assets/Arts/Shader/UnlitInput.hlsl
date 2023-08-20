@@ -9,6 +9,8 @@ CBUFFER_START(UnityPerMaterial)
     half _Cutoff;
     half _Surface;
     half4 _WorldPos;
+    float _MoveRange;
+    float _TimeScale;
 CBUFFER_END
 
 #ifdef UNITY_DOTS_INSTANCING_ENABLED

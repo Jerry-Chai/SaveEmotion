@@ -61,6 +61,7 @@ public class GameManager : Singleton<GameManager>
     public bool loadNewLevel;
     public bool startCountDown = false;
     public float currSpentTime;
+    public float TotalTimeLimit = 90.0f;
 
 
     [Header("Skill Param")]
@@ -102,8 +103,8 @@ public class GameManager : Singleton<GameManager>
 
         // level = GameObject.Find("LevelData").GetComponent<GameInfoContainer>().levelData;
         // LoadLevel(levelName[0]);
-        // loadNewLevel = true;
-        // startCountDown = false;
+         loadNewLevel = true;
+         startCountDown = false;
         // currSpentTime = currLevelPlayTime;
 
         snall = GameObject.Find("Snall");
@@ -116,8 +117,7 @@ public class GameManager : Singleton<GameManager>
     {
         if (startCountDown) 
         {
-            currSpentTime -= Time.deltaTime;
-            UIManager.Instance._uiList["UIManagement.UICountDownPanel"].OnUpdate(currSpentTime);
+            currSpentTime += Time.deltaTime;
         }
         if (gameState == GameState.NeedToReset) 
         {
@@ -220,7 +220,7 @@ public class GameManager : Singleton<GameManager>
                 currSkillCharge = skillChargeCoolDown;
                 currentEnergy += 1;
                 currentEnergy = Mathf.Min(currentEnergy, 4);
-                UIManager.Instance._uiList["UIManagement.UISkillPanel"].OnUpdate(currentEnergy / 4.0f);
+                //UIManager.Instance._uiList["UIManagement.UISkillPanel"].OnUpdate(currentEnergy / 4.0f);
             }
         }
 

@@ -5,6 +5,8 @@ Shader "Save Emotion/Lit_Move"
         [MainTexture] _BaseMap("Texture", 2D) = "white" {}
         [MainColor] _BaseColor("Color", Color) = (1, 1, 1, 1)
         _Cutoff("AlphaCutout", Range(0.0, 1.0)) = 0.5
+        _MoveRange("_MoveRange", Range(0.0, 100.0)) = 0.5
+        _TimeScale("_TimeScale", Range(0.0, 5.0)) = 0.5
 
             // BlendMode
             _Surface("__surface", Float) = 0.0
@@ -291,5 +293,5 @@ Shader "Save Emotion/Lit_Move"
                 }
             }
                 FallBack "Hidden/Universal Render Pipeline/FallbackError"
-                CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.UnlitShader"
+                //CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.UnlitShader"
 }

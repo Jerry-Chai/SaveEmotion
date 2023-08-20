@@ -31,7 +31,7 @@ public class SnallBehaviour : MonoBehaviour
     public int revertBlocksNum;
 
     private float distanceRatioToStopPoint;
-    
+
     public float idleTime = 3.0f;
     public float defendTime = 3.0f;
     public float shootTime = 5.0f;
@@ -57,15 +57,15 @@ public class SnallBehaviour : MonoBehaviour
     public List<GameObject> shootPos = new List<GameObject>();
     void Start()
     {
-       
+
         distanceRatioToStopPoint = 1.0f;
         state = SnallState.Idle;
         lastState = state;
         idleTimer = idleTime;
         defendTimer = defendTime;
         shootTimer = shootTime;
-    
-        animator =  GetComponent<Animator>();
+
+        animator = GetComponent<Animator>();
         animator.SetTrigger("Idle");
         moveDir = new Vector2(0.0f, 0.0f);
         originalY = this.transform.position.y;
@@ -93,7 +93,7 @@ public class SnallBehaviour : MonoBehaviour
             }
         }
 
-        if (state == SnallState.Idle && idleTimer >= 0) 
+        if (state == SnallState.Idle && idleTimer >= 0)
         {
             idleTimer -= Time.deltaTime;
         }
@@ -103,8 +103,8 @@ public class SnallBehaviour : MonoBehaviour
             idleTimer = idleTime;
         }
 
-        
-        if (state == SnallState.DetermineMove) 
+
+        if (state == SnallState.DetermineMove)
         {
             // 这个地方，最好做一个限制，太近的地方会影响技能释放的时间
             nextPos = DetermineNextPos();
@@ -122,10 +122,10 @@ public class SnallBehaviour : MonoBehaviour
         if (state == SnallState.Move && distance >= 0.01f)
         {
             currDistance += speed * Time.deltaTime;
-            float currRatio = currDistance  / totalDistance;
+            float currRatio = currDistance / totalDistance;
             this.transform.position = Vector3.Lerp(originalPos, nextPos, currRatio);
         }
-        else if (state == SnallState.Move &&  distance <= 0.01f)
+        else if (state == SnallState.Move && distance <= 0.01f)
         {
             state = SnallState.Defend;
         }
@@ -146,7 +146,7 @@ public class SnallBehaviour : MonoBehaviour
         {
             shootTimer -= Time.deltaTime;
         }
-        
+
         if (state == SnallState.ShootSkill && shootTimer <= shootObjectTime && !shoottedInThisLoop)
         {
             Debug.Log("Trigger Skill");
@@ -167,10 +167,10 @@ public class SnallBehaviour : MonoBehaviour
     {
         // 根据蜗牛的位置， 以及gridManager得到的下个点的位置， 去判断，
         // 如果这个点符合要求， 就走过去。
-        
+
         float currX = this.transform.position.x;
         float currY = this.transform.position.z;
-        
+
         //// random dir:
         //float x = Random.Range(-moveMinRange, moveMaxRange);
         //float y = Random.Range(-moveMinRange, moveMaxRange);
@@ -193,15 +193,15 @@ public class SnallBehaviour : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-            Debug.Log("Player is in the snall's range");
+        Debug.Log("Player is in the snall's range");
     }
 
-    public void TrigerSnallSkill(int revertBlockNum) 
+    public void TrigerSnallSkill(int revertBlockNum)
     {
-        if (GridManager.Instance.UnlockedNormalGridDic.Count <= 0) 
+        if (GridManager.Instance.UnlockedNormalGridDic.Count <= 0)
         {
             // 说明没有可以释放的地方了， 放空炮
-            for (int i = 0; i < shootSkillNum; i++) 
+            for (int i = 0; i < shootSkillNum; i++)
             {
                 int index = i >= shootPos.Count ? i : shootPos.Count - 1;
                 GameObject sphere = Instantiate(EffectPrefab);
@@ -211,27 +211,27 @@ public class SnallBehaviour : MonoBehaviour
                 sphere.transform.DOJump(shootPos[i].transform.position, 5, 1, 1.0f).OnComplete(() =>
                 {
                     //script.LockThisGrid();
-                    Destroy(sphere);
+                    StartCoroutine(DelayDestroy(sphere));
                 });
 
             }
-        
+            return;
         }
-        for (int i = 0; i < shootSkillNum; i++) 
+        for (int i = 0; i < shootSkillNum; i++)
         {
             //GridManager.Instance.LockGridBySnallSkill(revertBlocksNum, this.gameObject.transform.position);
             GameObject sphere = Instantiate(EffectPrefab);
             sphere.name = "Special Effect";
             var script = GridManager.Instance.GetRandomUnlockedGrid();
-            Debug.Log("Index "+ i + " : " +script.gameObject.GetInstanceID());
-            if(script == null)
+            Debug.Log("Index " + i + " : " + script.gameObject.GetInstanceID());
+            if (script == null)
             {
                 // 如果有一个没回传， 说明后面的所有都不会回传
                 return;
             }
             sphere.transform.localScale = new Vector3(3.0f, 3.0f, 3.0f);
             sphere.transform.position = this.transform.position;
-            sphere.transform.DOJump(script.transform.position, 5, 1, 1.0f).OnComplete(() => 
+            sphere.transform.DOJump(script.transform.position, 5, 1, 1.0f).OnComplete(() =>
             {
                 Vector2 dir = new Vector2(-(script.transform.position.x - this.transform.position.x), -(script.transform.position.z - this.transform.position.z)).normalized;
                 script.LockThisGridBySnallSkill(dir);
@@ -239,5 +239,11 @@ public class SnallBehaviour : MonoBehaviour
             });
         }
 
+    }
+
+    IEnumerator DelayDestroy(GameObject obj) 
+    {
+        yield return new WaitForSeconds(2.0f);
+        Destroy(obj);
     }
 }
