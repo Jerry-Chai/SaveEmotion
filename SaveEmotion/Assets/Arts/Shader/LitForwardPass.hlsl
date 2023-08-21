@@ -190,7 +190,7 @@ Varyings LitPassVertex(Attributes input)
     output.shadowCoord = GetShadowCoord(vertexInput);
 #endif
     half3 worldPos = mul(UNITY_MATRIX_MV, float4(input.positionOS.xyz, 1.0)).xyz;
-    worldPos.y += sin(_Time.y + _WorldPos.x + _WorldPos.y) * _MoveRange;
+    worldPos.y += (sin(_Time.y * _TimeScale + _WorldPos.x + _WorldPos.y) * _MoveRange);
     output.positionCS = mul(UNITY_MATRIX_P, float4(worldPos.xyz, 1.0));
 
     return output;
