@@ -113,9 +113,13 @@ public class EdgeCubeMovementController : MonoBehaviour
 
     IEnumerator CubeColorChange(int index, float time) 
     {
-        //transform.GetChild(index).gameObject.SetActive(false);
 
         var Script = transform.GetChild(index)?.GetComponent<BackGroundValueSetter>();
+        var animator = Script.gameObject.transform.Find("Shell")?.GetComponent<Animator>();
+        if (animator)
+        {
+            animator.SetTrigger("Close");
+        }
         float originalTime = time;
         while (time > 0.0f)
         {
