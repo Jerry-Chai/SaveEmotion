@@ -1,7 +1,10 @@
 using AllIn1SpriteShader;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.TerrainTools;
 using UnityEngine;
@@ -15,21 +18,35 @@ public class EdgeCubeMovementController : MonoBehaviour
     //public GameObject upright;
     public GameObject startPos;
     public GameObject centerCube;
-    public Color StartColor;
-    public Color EndColor;
+    public UnityEngine.Color StartColor;
+    public UnityEngine.Color EndColor;
 
 
     public int currIndex;
     public int totalCubeNum;
+    public bool gameEnable = false;
     void Start()
     {
         totalCubeNum = transform.childCount;
         currIndex = -1;
+
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            var script = transform.GetChild(i).gameObject?.GetComponent<BackGroundValueSetter>();
+            script.SetColor(EndColor);
+        }
+
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!gameEnable && (GameManager.Instance.currSpentTime > 0.0f))
+        {
+            gameEnable = true;
+            StartCoroutine(Enable());
+        }
         float timeInterval = GameManager.Instance.TotalTimeLimit / (float)totalCubeNum;
         int currProgress = Mathf.FloorToInt(GameManager.Instance.currSpentTime / timeInterval);
         if (currProgress > currIndex)
@@ -39,7 +56,7 @@ public class EdgeCubeMovementController : MonoBehaviour
                 if (currIndex >= 0 && currIndex < totalCubeNum) 
                 {
                     Debug.Log("Change Curr Index" + currIndex);
-                    StartCoroutine(CubeColorChange(currIndex, 2.0f));
+                    StartCoroutine(CubeDisable(currIndex, 2.0f));
                 };
                 currIndex++;
             }
@@ -79,7 +96,7 @@ public class EdgeCubeMovementController : MonoBehaviour
 
         foreach (GameObject child in targets)
         {
-            var scale = new Vector3(Random.Range(0.99f, 1.01f), 1, Random.Range(0.99f, 1.01f));
+            var scale = new Vector3(UnityEngine.Random.Range(0.99f, 1.01f), 1, UnityEngine.Random.Range(0.99f, 1.01f));
             float scaleX = child.transform.localScale.x * scale.x;
             float scaleZ = child.transform.localScale.z * scale.z;
             child.transform.localScale = new Vector3(scaleX, 7.0f, scaleZ);
@@ -111,7 +128,24 @@ public class EdgeCubeMovementController : MonoBehaviour
 
     }
 
-    IEnumerator CubeColorChange(int index, float time) 
+    IEnumerator Enable()
+    {
+        //yield return new WaitForSeconds(1.0f);
+        for (int i = transform.childCount -1; i >= 0 ; i--) 
+        {
+            var Script = transform.GetChild(i)?.GetComponent<BackGroundValueSetter>();
+            var animator = Script.gameObject.transform.Find("Shell")?.GetComponent<Animator>();
+            if (animator)
+            {
+                animator.SetTrigger("Open");
+            }
+            Script.SetColor(StartColor);
+            yield return null;
+        }
+
+    }
+
+    IEnumerator CubeDisable(int index, float time) 
     {
 
         var Script = transform.GetChild(index)?.GetComponent<BackGroundValueSetter>();
@@ -124,11 +158,10 @@ public class EdgeCubeMovementController : MonoBehaviour
         while (time > 0.0f)
         {
             time -= Time.deltaTime;
-            var color = Color.Lerp(StartColor, EndColor, (originalTime - time) / originalTime);
+            var color = UnityEngine.Color.Lerp(StartColor, EndColor, (originalTime - time) / originalTime);
             Script.SetColor(color);
             yield return null;
         }
-
         yield return null;
     }
 }
