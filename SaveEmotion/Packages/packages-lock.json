@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.brogrammist.jsam": {
+      "version": "https://github.com/jackyyang09/Simple-Unity-Audio-Manager.git#master",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "2ab07ae77915e3580158757ed3d71aa3bbac6df3"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
@@ -101,7 +108,7 @@
       "depth": 1,
       "source": "registry",
       "dependencies": {},
-      "url": "https://packages.unity.cn"
+      "url": "https://packages.unity.com"
     },
     "com.unity.performance.profile-analyzer": {
       "version": "1.2.2",
