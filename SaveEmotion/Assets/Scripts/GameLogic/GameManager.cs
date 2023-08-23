@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using JSAM;
 using UIManagement;
 using UnityEngine;
 
@@ -109,7 +110,8 @@ public class GameManager : Singleton<GameManager>
 
         snall = GameObject.Find("Snall");
         snallBehaviour = snall.GetComponent<SnallBehaviour>();
-        
+
+
     }
 
     // Update is called once per frame
@@ -265,9 +267,15 @@ public class GameManager : Singleton<GameManager>
         if (loadNewLevel) 
         {
             loadNewLevel = false;
-            startCountDown = true;
+            StartGameStartBehaviour();
         }
 
+    }
+
+    public void StartGameStartBehaviour()
+    {
+        startCountDown = true;
+        AudioManager.PlaySound(JSAMSounds.AlarmTick);
     }
 
     public void UpdateBrickNum(int num) 
