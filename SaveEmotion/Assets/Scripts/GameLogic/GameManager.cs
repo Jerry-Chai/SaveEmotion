@@ -259,10 +259,13 @@ public class GameManager : Singleton<GameManager>
 
     public void ShootBall() 
     {
+        var ballScript = ball.GetComponent<Ball>();
+        Vector3 dir = new Vector3(0, 0, 1);
+        Vector3 speed = new Vector3(0, 0, 1);
+        ballScript.Shoot(dir, speed);
         Rigidbody ballRB = ball.GetComponent<Rigidbody>();
-        ball.GetComponent<SphereCollider>().enabled = true;
+
         gameState = GameState.Start;
-        ballRB.velocity = new Vector3(100, 0, 100);
 
         if (loadNewLevel) 
         {

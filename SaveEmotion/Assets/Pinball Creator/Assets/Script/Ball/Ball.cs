@@ -135,4 +135,11 @@ public class Ball : MonoBehaviour {
 			tmp_Save_Min_Mag = 0;
 		}
 	}
+
+	public void Shoot(Vector3 dir, Vector3 Speed) 
+	{
+        this.GetComponent<SphereCollider>().enabled = true;
+        Rigidbody ballRB = this.GetComponent<Rigidbody>();
+        ballRB.velocity = new Vector3(100, 0, 100);
+    }
 }
