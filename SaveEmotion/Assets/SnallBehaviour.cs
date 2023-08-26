@@ -1,4 +1,5 @@
 using DG.Tweening;
+using JSAM;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -239,6 +240,11 @@ public class SnallBehaviour : MonoBehaviour
             });
         }
 
+    }
+
+    public void AniEvent_PlaySkillSound() 
+    {
+        AudioManager.PlaySound(JSAMSounds.SnallSkill);
     }
 
     IEnumerator DelayDestroy(GameObject obj) 

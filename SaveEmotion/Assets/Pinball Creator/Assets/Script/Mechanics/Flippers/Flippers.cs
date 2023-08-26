@@ -115,7 +115,7 @@ public class Flippers : MonoBehaviour {
 				}
 			}
 			if(!_GetButton){															// if a key is pressed
-				if(Input.GetKeyDown(name_F) && Sfx_Flipper){
+				if(Input.GetMouseButton(2) && Sfx_Flipper){
 					source.volume = 1;
 					source.PlayOneShot(Sfx_Flipper);									// play a sound
 				}

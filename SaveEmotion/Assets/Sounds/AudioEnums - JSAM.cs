@@ -1,5 +1,7 @@
     public enum JSAMSounds {
-        AlarmTick
+        AlarmTick,
+        ShellClose,
+        SnallSkill
     }
     public enum JSAMMusic {
         BackGroundMusic

@@ -119,6 +119,8 @@ public class GameManager : Singleton<GameManager>
         plane = new Plane(Vector3.up, ball.transform.position);
 
         _projectionScript = GameObject.Find("ProjectionManager")?.GetComponent<SceneProjection>();
+
+        AudioManager.PlayMusic(JSAMMusic.BackGroundMusic);
     }
 
     // Update is called once per frame
@@ -275,7 +277,7 @@ public class GameManager : Singleton<GameManager>
                     velocityDir.y = 0.0f;
                     velocityDir =  Vector3.Normalize(velocityDir);
                     _projectionScript.SimulateTrajectory(ball_prefab, ball.transform.position, velocityDir, speed);
-                    if (Input.GetKeyDown(shootKey))
+                    if (Input.GetMouseButton(1))
                     {
                         ShootBall(velocityDir,  speed);
                         _projectionScript.SetLineRendererEnableState(false);
