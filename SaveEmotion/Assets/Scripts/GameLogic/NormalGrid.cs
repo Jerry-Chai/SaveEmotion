@@ -128,7 +128,7 @@ public class NormalGrid : GridBase
         propertyBlock.SetVector("_DissolveDirection", objDir);
         while (time >= 0.0f)
         {
-            Debug.Log("Async Task Running");
+//            Debug.Log("Async Task Running");
             time -= Time.deltaTime;
             dissove += Time.deltaTime * change;
             propertyBlock.SetFloat("_ControlValue", dissove);
@@ -136,7 +136,7 @@ public class NormalGrid : GridBase
             await Task.Yield();
         }
         // This task will finish, even though it's object is destroyed
-        Debug.Log("Async Task Ended");
+  //      Debug.Log("Async Task Ended");
         //GridManager.
         //lock
         if (fromValue > toValue)

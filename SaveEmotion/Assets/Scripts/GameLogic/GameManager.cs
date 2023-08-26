@@ -82,6 +82,11 @@ public class GameManager : Singleton<GameManager>
     public GameObject snall;
     public SnallBehaviour snallBehaviour;
 
+
+    [Header("Plane")] 
+    private Plane plane;
+
+    public SceneProjection _projectionScript;
     // Start is called before the first frame update
     void Start()
     {
@@ -111,7 +116,9 @@ public class GameManager : Singleton<GameManager>
         snall = GameObject.Find("Snall");
         snallBehaviour = snall.GetComponent<SnallBehaviour>();
 
+        plane = new Plane(Vector3.up, ball.transform.position);
 
+        _projectionScript = GameObject.Find("ProjectionManager")?.GetComponent<SceneProjection>();
     }
 
     // Update is called once per frame
@@ -203,8 +210,7 @@ public class GameManager : Singleton<GameManager>
 
         if (Input.GetKeyDown("k")) 
         {
-            TriggerUltSkill();
-        
+            TriggerUltraSkill();
         }
 
     }
@@ -242,14 +248,43 @@ public class GameManager : Singleton<GameManager>
         ball_instance.SetActive(true);
         ball = ball_instance;
         ballScript = ball.GetComponent<Ball>();
+        ball.GetComponent<SphereCollider>().enabled = false;
+
         while (gameState == GameState.NeedToReset || gameState == GameState.Inited)
         {
-            ball.GetComponent<SphereCollider>().enabled = false;
+            //{// this creates a horizontal plane passing through this object's center
+                
+                // create a ray from the mousePosition
+                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                // plane.Raycast returns the distance from the ray start to the hit point
+                float distance;
+                Vector3 hitPoint;
+                if (plane.Raycast(ray, out distance)){
+                    
+                    _projectionScript.SetLineRendererEnableState(true);
+                    // some point of the plane was hit - get its coordinates
+                    hitPoint = ray.GetPoint(distance);
+                    // use the hitPoint to aim your cannon
+                    Debug.DrawLine(ball.transform.position, hitPoint);
+                    var ballPos = ball.transform.position;
+                    Vector3 velocityDir = hitPoint - ballPos;
+                    ballPos.y = 0;
+                    hitPoint.y = 0.0f;
+                    float speed = 100.0f;
+                    velocityDir = hitPoint - ballPos;
+                    velocityDir.y = 0.0f;
+                    velocityDir =  Vector3.Normalize(velocityDir);
+                    _projectionScript.SimulateTrajectory(ball_prefab, ball.transform.position, velocityDir, speed);
+                    if (Input.GetKeyDown(shootKey))
+                    {
+                        ShootBall(velocityDir,  speed);
+                        _projectionScript.SetLineRendererEnableState(false);
+                    }
+                }
+            //}
+            
             ball.transform.position = ballInitPosGo.transform.position;
-            if (Input.GetKeyDown(shootKey)) 
-            {
-                ShootBall();
-            }
+
             yield return null;
         }
         //yield return new WaitForSeconds(2);
@@ -257,11 +292,9 @@ public class GameManager : Singleton<GameManager>
 
     }
 
-    public void ShootBall() 
+    public void ShootBall(Vector3 dir, float speed) 
     {
         var ballScript = ball.GetComponent<Ball>();
-        Vector3 dir = new Vector3(0, 0, 1);
-        Vector3 speed = new Vector3(0, 0, 1);
         ballScript.Shoot(dir, speed);
         Rigidbody ballRB = ball.GetComponent<Rigidbody>();
 
@@ -315,7 +348,7 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    public void TriggerUltSkill() 
+    public void TriggerUltraSkill() 
     {
         if (currentEnergy >= 4) 
         {

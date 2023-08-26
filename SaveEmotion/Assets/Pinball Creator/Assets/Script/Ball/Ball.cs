@@ -136,10 +136,10 @@ public class Ball : MonoBehaviour {
 		}
 	}
 
-	public void Shoot(Vector3 dir, Vector3 Speed) 
+	public void Shoot(Vector3 dir, float Speed) 
 	{
         this.GetComponent<SphereCollider>().enabled = true;
         Rigidbody ballRB = this.GetComponent<Rigidbody>();
-        ballRB.velocity = new Vector3(100, 0, 100);
+        ballRB.velocity = dir * Speed;
     }
 }

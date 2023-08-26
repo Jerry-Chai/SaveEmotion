@@ -9,6 +9,7 @@ public class SceneProjection : MonoBehaviour
     private Scene _simulationScene;
     private PhysicsScene _physicsScene;
 
+    public LineRenderer lineRenderer;
     public Transform ObstaclesParent;
 
     private void Start()
@@ -32,26 +33,32 @@ public class SceneProjection : MonoBehaviour
     }
 
 
-    public LineRenderer _Line;
+    [SerializeField]
     private int _maxPhysicsFrameIterations = 100;
-    //public void SimulateTrajectory(Ball ballPrefab, UnityEngine.Vector3 pos, UnityEngine.Vector3 velocity)
-    //{
-    //    var ghostObj = Instantiate(ballPrefab, pos, UnityEngine.Quaternion.identity);
-    //    SceneManager.MoveGameObjectToScene(ghostObj.gameObject, _simulationScene);
 
-    //    ghostObj.Init(velocity, true);
+    public void SimulateTrajectory(GameObject ballPrefab, UnityEngine.Vector3 pos, UnityEngine.Vector3 dir, float velocity)
+    {
+        var ghostObj = Instantiate(ballPrefab, pos, UnityEngine.Quaternion.identity);
+        SceneManager.MoveGameObjectToScene(ghostObj.gameObject, _simulationScene);
 
-    //    _line.positionCount = _maxPhysicsFrameIterations;
+        ghostObj.GetComponent<Ball>().Shoot(dir, velocity);
 
-    //    for (var i = 0; i < _maxPhysicsFrameIterations; i++)
-    //    {
-    //        _physicsScene.Simulate(Time.fixedDeltaTime);
-    //        _line.SetPosition(i, ghostObj.transform.position);
-    //    }
+        lineRenderer.positionCount = _maxPhysicsFrameIterations;
 
-    //    Destroy(ghostObj.gameObject);
-    //}
+        for (var i = 0; i < _maxPhysicsFrameIterations; i++)
+        {
+            _physicsScene.Simulate(Time.fixedDeltaTime * 5.0f);
+            lineRenderer.SetPosition(i, ghostObj.transform.position);
+        }
 
+        Destroy(ghostObj.gameObject);
+    }
+
+    public void SetLineRendererEnableState(bool state)
+    {
+        if (lineRenderer.enabled == state) return;
+        lineRenderer.enabled = state;
+    }
 
     // Update is called once per frame
     void Update()
