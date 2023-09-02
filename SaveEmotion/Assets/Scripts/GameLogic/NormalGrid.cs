@@ -120,7 +120,7 @@ public class NormalGrid : GridBase
     
     async void AsyncDissolve(float fromValue, float toValue, float time, Vector2 objDir)
     {
-        Debug.Log("Async Task Started");
+//        Debug.Log("Async Task Started");
         float change = toValue - fromValue;
         change /= time;
         float dissove = fromValue;
