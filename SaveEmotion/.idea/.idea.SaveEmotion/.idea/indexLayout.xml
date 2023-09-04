@@ -5,6 +5,7 @@
     <explicitIncludes>
       <Path>Library/PackageCache/com.brogrammist.jsam@2ab07ae779</Path>
       <Path>Library/PackageCache/com.unity.2d.tilemap.extras@3.0.3</Path>
+      <Path>Library/PackageCache/com.unity.ai.navigation@1.1.1</Path>
       <Path>Library/PackageCache/com.unity.burst@1.8.2</Path>
       <Path>Library/PackageCache/com.unity.burst@1.8.4</Path>
       <Path>Library/PackageCache/com.unity.collab-proxy@2.0.0</Path>
@@ -33,6 +34,7 @@
       <Path>.idea</Path>
       <Path>.vs</Path>
       <Path>Logs</Path>
+      <Path>Temp</Path>
       <Path>UserSettings</Path>
       <Path>obj</Path>
     </explicitExcludes>

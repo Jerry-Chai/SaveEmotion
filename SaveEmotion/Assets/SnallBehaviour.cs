@@ -245,6 +245,7 @@ public class SnallBehaviour : MonoBehaviour
     public void AniEvent_PlaySkillSound() 
     {
         AudioManager.PlaySound(JSAMSounds.SnallSkill);
+        Debug.Log("Play Sounds");
     }
 
     IEnumerator DelayDestroy(GameObject obj) 
