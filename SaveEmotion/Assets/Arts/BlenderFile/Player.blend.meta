@@ -1,47 +1,8 @@
 fileFormatVersion: 2
-guid: 349f6990ec32b8a42acc9f080937fc3a
+guid: f60c9f350b173d64f867ba6f4a839bb9
 ModelImporter:
-  serializedVersion: 20200
-  internalIDToNameTable:
-  - first:
-      74: -1422011007694221501
-    second: Armature|ArmatureAction.001
-  - first:
-      74: -7737000216430242122
-    second: Armature|Defend
-  - first:
-      74: -7058704161837758603
-    second: Armature|Expolore
-  - first:
-      74: -8351949956127649855
-    second: Armature|Extend
-  - first:
-      74: 2720624936990662110
-    second: Armature|Eye.003Action
-  - first:
-      74: -6546253859805519196
-    second: Armature|Eye.005Action
-  - first:
-      74: 7015757936916366012
-    second: Armature|EyeAction
-  - first:
-      74: -5913978943142729594
-    second: Armature|Move
-  - first:
-      74: -2382795055912782974
-    second: Armature|Plane.001Action
-  - first:
-      74: -3689027746397427776
-    second: Armature|Shrink
-  - first:
-      74: 7963491589123843550
-    second: Armature|Shrink.001
-  - first:
-      74: -8237626587064005151
-    second: Armature|SnallFootAction
-  - first:
-      74: -4779212398625334856
-    second: Armature|Tpose
+  serializedVersion: 22200
+  internalIDToNameTable: []
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -53,6 +14,7 @@ ModelImporter:
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
     motionNodeName: 
     rigImportErrors: 
     rigImportWarnings: 
@@ -73,7 +35,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 3
+    globalScale: 1
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -82,6 +44,7 @@ ModelImporter:
     importBlendShapes: 1
     importCameras: 1
     importLights: 1
+    nodeNameCollisionStrategy: 1
     fileIdsGeneration: 2
     swapUVChannels: 0
     generateSecondaryUV: 0
@@ -93,6 +56,7 @@ ModelImporter:
     skinWeightsMode: 0
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
+    optimizeBones: 1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
@@ -103,6 +67,7 @@ ModelImporter:
     secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
+    strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -124,7 +89,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 3
+    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
@@ -135,6 +100,8 @@ ModelImporter:
   humanoidOversampling: 1
   avatarSetup: 0
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
   additionalBone: 0
   userData: 
   assetBundleName: 
