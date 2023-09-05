@@ -21,12 +21,12 @@ public class CollisionSound : MonoBehaviour {
 
 
 	void OnCollisionEnter(Collision collision) {						// -> On Collision Enter 
-		if (collision.relativeVelocity.magnitude > 1){
-			Hit_audio.volume = collision.relativeVelocity.magnitude*.25f;
-			if(Hit_audio.volume > volumMax)
-				Hit_audio.volume = volumMax;
-			if(a_hit)Hit_audio.clip = a_hit;
-			Hit_audio.Play();
-		}
+		// if (collision.relativeVelocity.magnitude > 1){
+		// 	Hit_audio.volume = collision.relativeVelocity.magnitude*.25f;
+		// 	if(Hit_audio.volume > volumMax)
+		// 		Hit_audio.volume = volumMax;
+		// 	if(a_hit)Hit_audio.clip = a_hit;
+		// 	Hit_audio.Play();
+		// }
 	}
 }

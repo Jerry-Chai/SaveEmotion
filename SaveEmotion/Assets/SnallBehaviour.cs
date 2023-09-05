@@ -27,6 +27,7 @@ public class SnallBehaviour : MonoBehaviour
     public float moveMaxRange;
     public GameObject upperLeft;
     public GameObject lowerRight;
+    public GameObject ShootObjRoot;
     // Start is called before the first frame update
     // 表示蜗牛一次技能能改变多少个block的状态
     public int revertBlocksNum;
@@ -67,7 +68,7 @@ public class SnallBehaviour : MonoBehaviour
         shootTimer = shootTime;
 
         animator = GetComponent<Animator>();
-        animator.SetTrigger("Idle");
+        animator.SetTrigger("Defend");
         moveDir = new Vector2(0.0f, 0.0f);
         originalY = this.transform.position.y;
 
@@ -80,18 +81,8 @@ public class SnallBehaviour : MonoBehaviour
         if (lastState != state)
         {
             lastState = state;
-            switch (state)
-            {
-                case SnallState.Defend:
-                    animator.SetTrigger("Defend");
-                    break;
-                case SnallState.Move:
-                    animator.SetTrigger("Move");
-                    break;
-                case SnallState.ShootSkill:
-                    animator.SetTrigger("ShootSkill");
-                    break;
-            }
+            StartCoroutine(SwitchAnimationState(lastState));
+
         }
 
         if (state == SnallState.Idle && idleTimer >= 0)
@@ -120,6 +111,11 @@ public class SnallBehaviour : MonoBehaviour
         // 移动状态
         float distance = Vector3.Distance(this.transform.position, nextPos);
         moveDir = new Vector2(-(nextPos.x - this.transform.position.x), -(nextPos.z - this.transform.position.z)).normalized;
+        if (moveDir.x * this.transform.localScale.x > 0.0f)
+        {
+            this.transform.localScale = new Vector3(-this.transform.localScale.x, this.transform.localScale.y, this.transform.localScale.z);
+        }
+
         if (state == SnallState.Move && distance >= 0.01f)
         {
             currDistance += speed * Time.deltaTime;
@@ -208,7 +204,7 @@ public class SnallBehaviour : MonoBehaviour
                 GameObject sphere = Instantiate(EffectPrefab);
                 sphere.name = "Special Effect";
                 sphere.transform.localScale = new Vector3(3.0f, 3.0f, 3.0f);
-                sphere.transform.position = this.transform.position;
+                sphere.transform.position = ShootObjRoot.transform.position;
                 sphere.transform.DOJump(shootPos[i].transform.position, 5, 1, 1.0f).OnComplete(() =>
                 {
                     //script.LockThisGrid();
@@ -252,5 +248,44 @@ public class SnallBehaviour : MonoBehaviour
     {
         yield return new WaitForSeconds(2.0f);
         Destroy(obj);
+    }    
+    
+    IEnumerator SwitchAnimationState(SnallState lastState) 
+    {
+        switch (lastState)
+        {
+            case SnallState.Defend:
+                animator.SetTrigger("Defend");
+                break;
+            case SnallState.Move:
+                animator.SetTrigger("Extend");
+                yield return  WaitFor.Frames(32);
+                animator.SetTrigger("Move");
+                break;
+            case SnallState.ShootSkill:
+                animator.SetTrigger("ShootSkill");
+                break;
+        }
+
+        yield return null;
+    }
+}
+
+
+public static class WaitFor
+{
+    public static IEnumerator Frames(int frameCount)
+    {
+        if (frameCount <= 0)
+        {
+            //throw new ArgumentOutOfRangeException("frameCount", "Cannot wait for less that 1 frame");
+            yield break;
+        }
+
+        while (frameCount > 0)
+        {
+            frameCount--;
+            yield return null;
+        }
     }
 }
