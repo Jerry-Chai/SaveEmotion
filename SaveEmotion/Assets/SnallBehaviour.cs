@@ -57,6 +57,18 @@ public class SnallBehaviour : MonoBehaviour
 
     public int shootSkillNum = 6;
     public List<GameObject> shootPos = new List<GameObject>();
+
+    public GameObject head0;
+    public GameObject head1;
+    public GameObject head2;
+    
+    public Material head0_mat;
+    public Material head1_mat;
+    public Material head2_mat;
+
+    [Header("Œª÷√œﬁ÷∆")]
+    public GameObject rightLower;
+    public GameObject leftUpper;
     void Start()
     {
 
@@ -73,6 +85,19 @@ public class SnallBehaviour : MonoBehaviour
         originalY = this.transform.position.y;
 
         shoottedInThisLoop = false;
+
+        head0 = transform.Find("Eye").gameObject;
+        head1 = transform.Find("Eye.005").gameObject;
+        head2 = transform.Find("Eye.003").gameObject;
+
+        head0_mat = head0.GetComponent<SkinnedMeshRenderer>().material;
+        head1_mat = head1.GetComponent<SkinnedMeshRenderer>().material;
+        head2_mat = head2.GetComponent<SkinnedMeshRenderer>().material;
+
+        if (!head0 || !head1 || !head2 || !head0_mat || !head1_mat || !head2_mat) 
+        {
+            Debug.LogError("Can't find head");
+        }
     }
 
     // Update is called once per frame
@@ -183,6 +208,10 @@ public class SnallBehaviour : MonoBehaviour
         //    isYInBound = currY + y < upperLeft.transform.position.z && currY + y > lowerRight.transform.position.z;
         //}
         Vector3 nextPos = GridManager.Instance.GetRandomGrid();
+        do
+        {
+            nextPos = GridManager.Instance.GetRandomGrid();
+        } while(nextPos.x > rightLower.transform.position.x || nextPos.x < leftUpper.transform.position.x || nextPos.z > leftUpper.transform.position.z || nextPos.z < rightLower.transform.position.z);
         Debug.Log(nextPos);
         return nextPos;
         //return new Vector3(currX + x, this.transform.position.y, currY + y); ;
