@@ -94,6 +94,7 @@ public class GameManager : Singleton<GameManager>
         if (gameState == GameState.NeedToReset) 
         {
             StartCoroutine("WaitForShoot");
+            gameState = GameState.Inited;
         }
 
         hinge = flipperGo.GetComponent<HingeJoint>();
@@ -126,6 +127,7 @@ public class GameManager : Singleton<GameManager>
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(gameState.ToString());
         if (startCountDown) 
         {
             currSpentTime += Time.deltaTime;
@@ -136,10 +138,10 @@ public class GameManager : Singleton<GameManager>
             gameState = GameState.Inited;
         }
 
-        if (gameState == GameState.Start) 
-        {
-            StopCoroutine("WaitForShoot");
-        }
+        //if (gameState == GameState.Start) 
+        //{
+        //    StopCoroutine("WaitForShoot");
+        //}
 
         // motor = hinge.motor;	
         // motor = hinge.motor;														//		Flipper is desactivate. But you want him to go to the init position.
@@ -262,7 +264,7 @@ public class GameManager : Singleton<GameManager>
                 float distance;
                 Vector3 hitPoint;
                 if (plane.Raycast(ray, out distance)){
-                    
+                Debug.Log("Couroutine is runing");
                     _projectionScript.SetLineRendererEnableState(true);
                     // some point of the plane was hit - get its coordinates
                     hitPoint = ray.GetPoint(distance);
@@ -274,7 +276,7 @@ public class GameManager : Singleton<GameManager>
                     hitPoint.y = 0.0f;
                     float speed = 100.0f;
                     velocityDir = hitPoint - ballPos;
-                    velocityDir.y = 0.0f;
+                    velocityDir.y = 0.03f;
                     velocityDir =  Vector3.Normalize(velocityDir);
                     _projectionScript.SimulateTrajectory(ball_prefab, ball.transform.position, velocityDir, speed);
                     if (Input.GetMouseButton(1))
@@ -289,7 +291,7 @@ public class GameManager : Singleton<GameManager>
 
             yield return null;
         }
-        //yield return new WaitForSeconds(2);
+        yield return null;
         //gameState = GameState.WaitingForInput;
 
     }
@@ -363,4 +365,36 @@ public class GameManager : Singleton<GameManager>
     
     }
 
+
+    //async void WaitForShoot()
+    //{
+    //    //        Debug.Log("Async Task Started");
+    //    float change = toValue - fromValue;
+    //    change /= time;
+    //    float dissove = fromValue;
+
+    //    propertyBlock.SetVector("_DissolveDirection", objDir);
+    //    while (time >= 0.0f)
+    //    {
+    //        //            Debug.Log("Async Task Running");
+    //        time -= Time.deltaTime;
+    //        dissove += Time.deltaTime * change;
+    //        propertyBlock.SetFloat("_ControlValue", dissove);
+    //        renderer.SetPropertyBlock(propertyBlock);
+    //        await Task.Yield();
+    //    }
+    //    // This task will finish, even though it's object is destroyed
+    //    //      Debug.Log("Async Task Ended");
+    //    //GridManager.
+    //    //lock
+    //    if (fromValue > toValue)
+    //    {
+    //        GridManager.Instance.LockNormalGrid(this.gameObject.GetInstanceID(), this);
+    //    }
+    //    else
+    //    {
+    //        GridManager.Instance.UnlockNormalGrid(this.gameObject.GetInstanceID(), this);
+
+    //    }
+    //}
 }
