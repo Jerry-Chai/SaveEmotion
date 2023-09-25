@@ -17,12 +17,12 @@ Shader "Unlit/Dissolve"
         Tags { "RenderType"="Transparent" }
         LOD 100
         Blend SrcAlpha OneMinusSrcAlpha 
-        Stencil
-        {
-            Ref 1
-            Comp Equal
-            Pass Keep
-        }
+        //Stencil
+        //{
+        //    Ref 1
+        //    Comp Equal
+        //    Pass Keep
+        //}
         Pass
         {
             CGPROGRAM
