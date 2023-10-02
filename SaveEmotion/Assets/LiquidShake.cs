@@ -18,8 +18,8 @@ public class LiquidShake : MonoBehaviour
     void Update()
     {
 
-        velocity = (transform.position - lastPos) / Time.deltaTime;
-        angularVelocity
-        lastPos = transform.position;
+        //velocity = (transform.position - lastPos) / Time.deltaTime;
+        //angularVelocity
+        //lastPos = transform.position;
     }
 }
