@@ -59,8 +59,8 @@ Shader "Unlit/StencilLiquid"
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 //return i.uv.x;
-                if(i.uv.x > 0.5 ) discard;
-                return col;
+                //if(i.uv.x > 0.5 ) discard;
+                return 1.0f;
             }
             ENDCG
         }

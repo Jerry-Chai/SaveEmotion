@@ -86,6 +86,9 @@ public class GameManager : Singleton<GameManager>
     [Header("Plane")] 
     private Plane plane;
 
+    [Header("Liquid Mat Ctrl")]
+    public Material liquidMat;
+
     public SceneProjection _projectionScript;
     // Start is called before the first frame update
     void Start()
@@ -122,12 +125,13 @@ public class GameManager : Singleton<GameManager>
         _projectionScript = GameObject.Find("ProjectionManager")?.GetComponent<SceneProjection>();
 
         AudioManager.PlayMusic(JSAMMusic.BackGroundMusic);
+        liquidMat.SetFloat("_WobbleX", 0.0f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(gameState.ToString());
+//        Debug.Log(gameState.ToString());
         if (startCountDown) 
         {
             currSpentTime += Time.deltaTime;
@@ -149,6 +153,7 @@ public class GameManager : Singleton<GameManager>
         // hinge.useMotor = false;
         //
         Vector3 m_Input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        DetermineLiquidMovement(m_Input);
         if (Input.GetButton("Vertical") || Input.GetButton("Horizontal"))
         {
             var motor = hinge.motor;                                                    // move the flipper to reach the init position
@@ -264,7 +269,7 @@ public class GameManager : Singleton<GameManager>
                 float distance;
                 Vector3 hitPoint;
                 if (plane.Raycast(ray, out distance)){
-                Debug.Log("Couroutine is runing");
+//                Debug.Log("Couroutine is runing");
                     _projectionScript.SetLineRendererEnableState(true);
                     // some point of the plane was hit - get its coordinates
                     hitPoint = ray.GetPoint(distance);
@@ -363,6 +368,80 @@ public class GameManager : Singleton<GameManager>
         // 1 means padding 1 grid;
         Debug.Log("Trigger Skill");
     
+    }
+
+    private float lastWaveCountDownValue = 0.0f;
+    private float maxWaveWobble = 45.0f;
+    private float waveCountDownValue = 0.0f;
+    private float signValue = 1.0f;
+    private  float decreaseSpeed = 4.0f;
+    private float fromValue = 0.0f;
+    private float toValue = 0.0f;
+    public void DetermineLiquidMovement(Vector3 m_Input)
+    {
+        // -inputx 是因为惯性看起来是这样。
+        float waveX = Mathf.Abs(m_Input.x) >= 0.0001f ? -m_Input.x : 0.01f;
+        Debug.Log("waveX: " + waveX + "waveCoundDown: " + waveCountDownValue);
+        //这个地方应该是说如果我现在的这个值比我原来的值大，就重置。
+        if (Mathf.Abs(waveX) > Mathf.Abs(waveCountDownValue) + 0.1f)
+        {
+            Debug.Log("waveX: " + waveX + "waveCoundDown: " + waveCountDownValue);
+            waveCountDownValue = waveX;
+            float signValue = (waveCountDownValue + 0.0001f) / Mathf.Abs(waveCountDownValue + 0.0001f);
+            fromValue = waveX;
+            toValue = -signValue * (Mathf.Abs(waveX) - 0.1f);
+            Debug.Log("fromValue: " + fromValue + "  toValue: " + toValue);
+        }
+        else if(fromValue != toValue && (Mathf.Abs(Mathf.Abs(fromValue) - Mathf.Abs(toValue)) > 0.001f))
+        {
+            Debug.Log("fromValue: " + fromValue + "  toValue: " + toValue);
+            
+
+            // 首先把现在的waveCount的正负值知道；
+            if (signValue > 0.0f)
+            {
+                if (waveCountDownValue >= toValue)
+                {
+                    waveCountDownValue += -Time.deltaTime * decreaseSpeed;
+                    float wobbleX = waveCountDownValue * maxWaveWobble;
+                    liquidMat.SetFloat("_WobbleX", wobbleX);
+                    Debug.Log("WobleX: " + wobbleX);
+                }
+                else
+                {
+                    fromValue = toValue;
+                    signValue = (fromValue + 0.0001f) / Mathf.Abs(fromValue + 0.0001f);
+                    toValue = -signValue * (Mathf.Abs(fromValue) - 0.1f);
+                    if (Mathf.Abs(toValue) <= 0.1f)
+                    {
+                        toValue = fromValue;
+                    }
+                    waveCountDownValue = fromValue;
+                }
+            }
+            else
+            {
+                if (waveCountDownValue <= toValue)
+                {
+                    waveCountDownValue +=  Time.deltaTime * decreaseSpeed;
+                    float wobbleX = waveCountDownValue * maxWaveWobble;
+                    liquidMat.SetFloat("_WobbleX", wobbleX);
+                    Debug.Log("WobleX: " + wobbleX);
+                }
+                else
+                {
+                    fromValue = toValue;
+                    signValue = (fromValue + 0.0001f) / Mathf.Abs(fromValue + 0.0001f);
+                    toValue = -signValue * (Mathf.Abs(fromValue) - 0.1f);
+                    if (Mathf.Abs(toValue) <= 0.01f)
+                    {
+                        toValue = fromValue;
+                    }
+                    waveCountDownValue = fromValue;
+                }
+            }
+        }
+
     }
 
 
