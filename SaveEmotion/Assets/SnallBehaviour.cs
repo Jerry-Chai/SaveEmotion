@@ -98,11 +98,14 @@ public class SnallBehaviour : MonoBehaviour
         {
             Debug.LogError("Can't find head");
         }
+
+        StartCoroutine(SwitchAnimationState(SnallState.Defend));
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.Instance.gameState != GameManager.GameState.Start) return;
         if (lastState != state)
         {
             lastState = state;

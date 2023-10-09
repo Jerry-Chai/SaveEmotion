@@ -141,12 +141,13 @@ public class NormalGrid : GridBase
         //lock
         if (fromValue > toValue)
         {
+            if(this != null)
             GridManager.Instance.LockNormalGrid(this.gameObject.GetInstanceID(), this);
         }
         else 
         {
+            if (this != null)
             GridManager.Instance.UnlockNormalGrid(this.gameObject.GetInstanceID(), this);
-
         }
     }
 

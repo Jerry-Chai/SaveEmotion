@@ -83,7 +83,7 @@ public class GameManager : Singleton<GameManager>
     public SnallBehaviour snallBehaviour;
 
 
-    [Header("Plane")] 
+    [Header("Plane")]
     private Plane plane;
 
     [Header("Liquid Mat Ctrl")]
@@ -94,7 +94,7 @@ public class GameManager : Singleton<GameManager>
     void Start()
     {
         gameState = GameState.NeedToReset;
-        if (gameState == GameState.NeedToReset) 
+        if (gameState == GameState.NeedToReset)
         {
             StartCoroutine("WaitForShoot");
             gameState = GameState.Inited;
@@ -113,8 +113,8 @@ public class GameManager : Singleton<GameManager>
 
         // level = GameObject.Find("LevelData").GetComponent<GameInfoContainer>().levelData;
         // LoadLevel(levelName[0]);
-         loadNewLevel = true;
-         startCountDown = false;
+        loadNewLevel = true;
+        startCountDown = false;
         // currSpentTime = currLevelPlayTime;
 
         snall = GameObject.Find("Snall");
@@ -126,17 +126,18 @@ public class GameManager : Singleton<GameManager>
 
         AudioManager.PlayMusic(JSAMMusic.BackGroundMusic);
         liquidMat.SetFloat("_WobbleX", 0.0f);
+        StartCoroutine(UpdateEnergyMat(0, 2.0f));
     }
 
     // Update is called once per frame
     void Update()
     {
-//        Debug.Log(gameState.ToString());
-        if (startCountDown) 
+        //        Debug.Log(gameState.ToString());
+        if (startCountDown)
         {
             currSpentTime += Time.deltaTime;
         }
-        if (gameState == GameState.NeedToReset) 
+        if (gameState == GameState.NeedToReset)
         {
             StartCoroutine("WaitForShoot");
             gameState = GameState.Inited;
@@ -177,7 +178,7 @@ public class GameManager : Singleton<GameManager>
 
             isHitCount = false;
         }
-        else 
+        else
         {
             isHitCount = true;
             JointSpring hingeSpring = hinge.spring;
@@ -186,7 +187,7 @@ public class GameManager : Singleton<GameManager>
             hinge.spring = hingeSpring;
         }
 
-        if (Input.GetKeyDown("j")) 
+        if (Input.GetKeyDown("j"))
         {
             currentButtonPressedTime = buttonPressedDuration;
             isButtonPressed = true;
@@ -196,11 +197,11 @@ public class GameManager : Singleton<GameManager>
         {
             currentButtonPressedTime -= Time.deltaTime;
         }
-        else 
+        else
         {
             isButtonPressed = false;
         }
- 
+
 
         if (currentHitTime >= 0.0f)
         {
@@ -211,13 +212,13 @@ public class GameManager : Singleton<GameManager>
             isHit = false;
         }
 
-        if (currSkillCharge >= 0.0f) 
+        if (currSkillCharge >= 0.0f)
         {
             currSkillCharge -= Time.deltaTime;
         }
 
 
-        if (Input.GetKeyDown("k")) 
+        if (Input.GetKeyDown("k"))
         {
             TriggerUltraSkill();
         }
@@ -237,6 +238,7 @@ public class GameManager : Singleton<GameManager>
                 currSkillCharge = skillChargeCoolDown;
                 currentEnergy += 1;
                 currentEnergy = Mathf.Min(currentEnergy, 4);
+                StartCoroutine(UpdateEnergyMat(currentEnergy, 2.0f));
                 //UIManager.Instance._uiList["UIManagement.UISkillPanel"].OnUpdate(currentEnergy / 4.0f);
             }
         }
@@ -246,7 +248,7 @@ public class GameManager : Singleton<GameManager>
 
     IEnumerator WaitForShoot()
     {
-        if (ball) 
+        if (ball)
         {
             Destroy(ball);
         }
@@ -262,36 +264,36 @@ public class GameManager : Singleton<GameManager>
         while (gameState == GameState.NeedToReset || gameState == GameState.Inited)
         {
             //{// this creates a horizontal plane passing through this object's center
-                
-                // create a ray from the mousePosition
-                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                // plane.Raycast returns the distance from the ray start to the hit point
-                float distance;
-                Vector3 hitPoint;
-                if (plane.Raycast(ray, out distance)){
-//                Debug.Log("Couroutine is runing");
-                    _projectionScript.SetLineRendererEnableState(true);
-                    // some point of the plane was hit - get its coordinates
-                    hitPoint = ray.GetPoint(distance);
-                    // use the hitPoint to aim your cannon
-                    Debug.DrawLine(ball.transform.position, hitPoint);
-                    var ballPos = ball.transform.position;
-                    Vector3 velocityDir = hitPoint - ballPos;
-                    ballPos.y = 0;
-                    hitPoint.y = 0.0f;
-                    float speed = 100.0f;
-                    velocityDir = hitPoint - ballPos;
-                    velocityDir.y = 0.03f;
-                    velocityDir =  Vector3.Normalize(velocityDir);
-                    _projectionScript.SimulateTrajectory(ball_prefab, ball.transform.position, velocityDir, speed);
-                    if (Input.GetMouseButton(1))
-                    {
-                        ShootBall(velocityDir,  speed);
-                        _projectionScript.SetLineRendererEnableState(false);
-                    }
+
+            // create a ray from the mousePosition
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            // plane.Raycast returns the distance from the ray start to the hit point
+            float distance;
+            Vector3 hitPoint;
+            if (plane.Raycast(ray, out distance)) {
+                //                Debug.Log("Couroutine is runing");
+                _projectionScript.SetLineRendererEnableState(true);
+                // some point of the plane was hit - get its coordinates
+                hitPoint = ray.GetPoint(distance);
+                // use the hitPoint to aim your cannon
+                Debug.DrawLine(ball.transform.position, hitPoint);
+                var ballPos = ball.transform.position;
+                Vector3 velocityDir = hitPoint - ballPos;
+                ballPos.y = 0;
+                hitPoint.y = 0.0f;
+                float speed = 100.0f;
+                velocityDir = hitPoint - ballPos;
+                velocityDir.y = 0.03f;
+                velocityDir = Vector3.Normalize(velocityDir);
+                _projectionScript.SimulateTrajectory(ball_prefab, ball.transform.position, velocityDir, speed);
+                if (Input.GetMouseButton(1))
+                {
+                    ShootBall(velocityDir, speed);
+                    _projectionScript.SetLineRendererEnableState(false);
                 }
+            }
             //}
-            
+
             ball.transform.position = ballInitPosGo.transform.position;
 
             yield return null;
@@ -301,7 +303,7 @@ public class GameManager : Singleton<GameManager>
 
     }
 
-    public void ShootBall(Vector3 dir, float speed) 
+    public void ShootBall(Vector3 dir, float speed)
     {
         var ballScript = ball.GetComponent<Ball>();
         ballScript.Shoot(dir, speed);
@@ -309,7 +311,7 @@ public class GameManager : Singleton<GameManager>
 
         gameState = GameState.Start;
 
-        if (loadNewLevel) 
+        if (loadNewLevel)
         {
             loadNewLevel = false;
             StartGameStartBehaviour();
@@ -323,31 +325,31 @@ public class GameManager : Singleton<GameManager>
         AudioManager.PlaySound(JSAMSounds.AlarmTick);
     }
 
-    public void UpdateBrickNum(int num) 
+    public void UpdateBrickNum(int num)
     {
         currBricksNum += num;
-        UpdateProgressBar(1.0f - (float)currBricksNum/(float)totalBricksNum);
+        UpdateProgressBar(1.0f - (float)currBricksNum / (float)totalBricksNum);
     }
 
     public void UpdateProgressBar(float value)
     {
-        
+
         UIManager.Instance._uiList["UIManagement.UIProgressPanel"].OnUpdate(value);
-    
+
     }
 
-    public void LoadLevel(string levelName) 
+    public void LoadLevel(string levelName)
     {
         bool find = false;
         foreach (SingleLevel level in level.levelLists)
         {
-            if (levelName == level.name) 
+            if (levelName == level.name)
             {
                 currLevelPlayTime = level.gameTime;
                 find = true;
             }
         }
-        if(!find)
+        if (!find)
         {
             Debug.LogError("Can't find level: " + levelName);
         }
@@ -357,17 +359,34 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    public void TriggerUltraSkill() 
+    public void TriggerUltraSkill()
     {
-        if (currentEnergy >= 4) 
+        if (currentEnergy > 3)
         {
             currentEnergy = 0;
-            UIManager.Instance._uiList["UIManagement.UISkillPanel"].OnUpdate(currentEnergy / 4.0f);
+            //UIManager.Instance._uiList["UIManagement.UISkillPanel"].OnUpdate(currentEnergy / 4.0f);
             GridManager.Instance.TriggerSkill(ball.transform.position, 2, 2);
+            StartCoroutine(UpdateEnergyMat(0, 2.0f));
         }
         // 1 means padding 1 grid;
         Debug.Log("Trigger Skill");
-    
+
+    }
+    public float[] energyValueList = new float[4]{-4.0f, -2.0f, 1.0f, 4.0f};
+    IEnumerator UpdateEnergyMat(int index, float time) 
+    {
+        float fromValue = energyValueList[(index + 3) % 4];
+        float toValue = energyValueList[index];
+        float currValue = 0.0f;
+
+        while (currValue <= 1.0f) 
+        {
+        
+            currValue += Time.deltaTime * (1 / time);
+            liquidMat.SetVector("_FillAmount", new Vector4(0.0f, 0.0f, fromValue*(1-currValue) + toValue * currValue, 0.0f));
+            yield return null;
+        }
+        yield return null;
     }
 
     private float lastWaveCountDownValue = 0.0f;
@@ -381,20 +400,20 @@ public class GameManager : Singleton<GameManager>
     {
         // -inputx 是因为惯性看起来是这样。
         float waveX = Mathf.Abs(m_Input.x) >= 0.0001f ? -m_Input.x : 0.01f;
-        Debug.Log("waveX: " + waveX + "waveCoundDown: " + waveCountDownValue);
+        //Debug.Log("waveX: " + waveX + "waveCoundDown: " + waveCountDownValue);
         //这个地方应该是说如果我现在的这个值比我原来的值大，就重置。
         if (Mathf.Abs(waveX) > Mathf.Abs(waveCountDownValue) + 0.1f)
         {
-            Debug.Log("waveX: " + waveX + "waveCoundDown: " + waveCountDownValue);
+            //Debug.Log("waveX: " + waveX + "waveCoundDown: " + waveCountDownValue);
             waveCountDownValue = waveX;
             float signValue = (waveCountDownValue + 0.0001f) / Mathf.Abs(waveCountDownValue + 0.0001f);
             fromValue = waveX;
             toValue = -signValue * (Mathf.Abs(waveX) - 0.1f);
-            Debug.Log("fromValue: " + fromValue + "  toValue: " + toValue);
+            //Debug.Log("fromValue: " + fromValue + "  toValue: " + toValue);
         }
         else if(fromValue != toValue && (Mathf.Abs(Mathf.Abs(fromValue) - Mathf.Abs(toValue)) > 0.001f))
         {
-            Debug.Log("fromValue: " + fromValue + "  toValue: " + toValue);
+            //Debug.Log("fromValue: " + fromValue + "  toValue: " + toValue);
             
 
             // 首先把现在的waveCount的正负值知道；
@@ -405,7 +424,7 @@ public class GameManager : Singleton<GameManager>
                     waveCountDownValue += -Time.deltaTime * decreaseSpeed;
                     float wobbleX = waveCountDownValue * maxWaveWobble;
                     liquidMat.SetFloat("_WobbleX", wobbleX);
-                    Debug.Log("WobleX: " + wobbleX);
+                    //Debug.Log("WobleX: " + wobbleX);
                 }
                 else
                 {
@@ -426,7 +445,7 @@ public class GameManager : Singleton<GameManager>
                     waveCountDownValue +=  Time.deltaTime * decreaseSpeed;
                     float wobbleX = waveCountDownValue * maxWaveWobble;
                     liquidMat.SetFloat("_WobbleX", wobbleX);
-                    Debug.Log("WobleX: " + wobbleX);
+                    //Debug.Log("WobleX: " + wobbleX);
                 }
                 else
                 {
