@@ -131,7 +131,7 @@ public class Flippers : MonoBehaviour {
   
   
 			if(!_GetButton){
-				if(Input.GetKey(name_F) || b_touch){										// --> the player presses a button or presses a touch screen
+				if(Input.GetButton(name_F) || b_touch){										// --> the player presses a button or presses a touch screen
 					hinge.motor = motor;													// move the flipper
 					hinge.useMotor = true;
                     motor.force = flipper_Force;
