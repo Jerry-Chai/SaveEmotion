@@ -55,7 +55,7 @@ public class EdgeCubeMovementController : MonoBehaviour
             {
                 if (currIndex >= 0 && currIndex < totalCubeNum) 
                 {
-                    Debug.Log("Change Curr Index" + currIndex);
+                    //Debug.Log("Change Curr Index" + currIndex);
                     StartCoroutine(CubeDisable(currIndex, 2.0f));
                 };
                 currIndex++;

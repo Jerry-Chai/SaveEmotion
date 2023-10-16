@@ -157,7 +157,8 @@ public class NormalGrid : GridBase
         //Get a renderer component either of the own gameobject or of a child
         //set the color property
         //StopCoroutine("Dissolve");
-        Vector2 snallDir = GameManager.Instance.snallBehaviour.moveDir;
+        Vector2 snallDir = GameManager.Instance.GetBossDir();
+        Debug.Log(snallDir);//snallBehaviour.moveDir;
         //StartCoroutine(Dissolve(200, 0 , 2, snallDir));
         AsyncDissolve(200, -15 , 2, snallDir);
         //apply propertyBlock to renderer

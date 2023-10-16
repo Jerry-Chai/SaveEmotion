@@ -67,6 +67,7 @@ public class GophersBehaviour : MonoBehaviour
     // public GameObject leftUpper;
 
     public GameObject gophersRoot;
+    private int lastHoleIndex = 0;
     void Start()
     {
 
@@ -98,6 +99,9 @@ public class GophersBehaviour : MonoBehaviour
         // }
         //
         // StartCoroutine(SwitchAnimationState(GophersState.Defend));
+
+        Vector3 startPos = gophersRoot.transform.GetChild(lastHoleIndex).gameObject.transform.position;
+        this.gameObject.transform.position = new Vector3(startPos.x, originalY, startPos.z);
     }
 
     // Update is called once per frame
@@ -194,10 +198,18 @@ public class GophersBehaviour : MonoBehaviour
         float currX = this.transform.position.x;
         float currY = this.transform.position.z;
 
-        foreach (var VARIABLE in prefa)
+        // 遍历gopherRoot下面的所有的gopher， 随机找一个  
+        int childCount = gophersRoot.transform.childCount;
+        int randomIndex = Random.Range(0, childCount);
+        while (lastHoleIndex == randomIndex) 
         {
-            
+            randomIndex = Random.Range(0, childCount);
         }
+        lastHoleIndex = randomIndex;
+        GameObject randomGopher = gophersRoot.transform.GetChild(randomIndex).gameObject;
+        Vector3 randomPos = randomGopher.transform.position;
+        randomPos.y = originalY;
+        return randomPos;
     }
 
     public void OnTriggerEnter(Collider other)
