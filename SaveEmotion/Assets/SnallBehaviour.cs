@@ -66,6 +66,9 @@ public class SnallBehaviour : MonoBehaviour
     public Material head1_mat;
     public Material head2_mat;
 
+    public float hitCount = 2.0f;
+    private float hitCountDown = 0.0f;
+
     [Header("Î»ÖÃÏÞÖÆ")]
     public GameObject rightLower;
     public GameObject leftUpper;
@@ -100,12 +103,15 @@ public class SnallBehaviour : MonoBehaviour
         }
 
         StartCoroutine(SwitchAnimationState(SnallState.Defend));
+
+        hitCountDown = 0.0f;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.Instance.gameState != GameManager.GameState.Start) return;
+        if (!GameManager.Instance.isGameStarted) return;
         if (lastState != state)
         {
             lastState = state;
@@ -186,6 +192,13 @@ public class SnallBehaviour : MonoBehaviour
             shootTimer = shootTime;
         }
 
+
+        if (hitCountDown >= 0.0f) 
+        {
+            hitCountDown -= Time.deltaTime;
+        }
+
+
     }
 
     public Vector3 DetermineNextPos()
@@ -222,7 +235,33 @@ public class SnallBehaviour : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Player is in the snall's range");
+        
+        if (other.gameObject.tag == "Ball")
+        {
+            Debug.Log("Player is in the snall's range");
+            if (state == SnallState.Move) 
+            {
+                if (hitCountDown >= 0.0f) return;
+                hitCountDown = hitCount;
+                if (head0.activeSelf) 
+                {
+                    StartCoroutine(DeasableHead(head0, head0_mat, 2.0f));
+                    return;
+                }
+                if (head1.activeSelf) 
+                {
+                    StartCoroutine(DeasableHead(head1, head1_mat, 2.0f));
+                    return;
+                }
+                if (head2.activeSelf) 
+                {
+                    StartCoroutine(DeasableHead(head2, head2_mat, 2.0f));
+                    StartCoroutine(DelayDestroy(this.gameObject));
+                    return;
+                }
+            }
+        }
+
     }
 
     public void TrigerSnallSkill(int revertBlockNum)
@@ -279,6 +318,10 @@ public class SnallBehaviour : MonoBehaviour
     IEnumerator DelayDestroy(GameObject obj) 
     {
         yield return new WaitForSeconds(2.0f);
+        if (gameObject.activeSelf) 
+        {
+            gameObject.SetActive(false);
+        }
         Destroy(obj);
     }    
     
@@ -299,6 +342,21 @@ public class SnallBehaviour : MonoBehaviour
                 break;
         }
 
+        yield return null;
+    }
+
+    IEnumerator DeasableHead(GameObject head, Material mat, float time)
+    {
+        float timecount = 0.0f;
+        while (timecount < time) 
+        {
+            timecount += Time.deltaTime;
+            float contrlVal = timecount / time;
+            float val = Mathf.Lerp(-30.0f, 200.0f, contrlVal);
+            mat.SetFloat("_ControlValue", val);
+            yield return null;
+        }
+        head.SetActive(false);
         yield return null;
     }
 }

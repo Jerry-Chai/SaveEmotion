@@ -61,6 +61,7 @@ public class GameManager : Singleton<GameManager>
     public int currLevelPlayTime;
     public bool loadNewLevel;
     public bool startCountDown = false;
+    public bool isGameStarted = false;
     public float currSpentTime;
     public float TotalTimeLimit = 90.0f;
 
@@ -91,6 +92,20 @@ public class GameManager : Singleton<GameManager>
 
     public SceneProjection _projectionScript;
     // Start is called before the first frame update
+
+
+
+    public enum BossType 
+    {
+        Snall,
+        Gopher
+    }
+
+    public BossType bossType;
+
+    [Header("Snall Info")]
+    public GameObject Gophers;
+    public GophersBehaviour GophersBehaviour;
     void Start()
     {
         gameState = GameState.NeedToReset;
@@ -117,8 +132,17 @@ public class GameManager : Singleton<GameManager>
         startCountDown = false;
         // currSpentTime = currLevelPlayTime;
 
+        
         snall = GameObject.Find("Snall");
-        snallBehaviour = snall.GetComponent<SnallBehaviour>();
+        if (snall) 
+        {
+            snallBehaviour = snall.GetComponent<SnallBehaviour>();
+        }
+        Gophers = GameObject.Find("Gophers");
+        if (Gophers)
+        {
+            GophersBehaviour = Gophers.GetComponent<GophersBehaviour>();
+        }
 
         plane = new Plane(Vector3.up, ball.transform.position);
 
@@ -288,6 +312,7 @@ public class GameManager : Singleton<GameManager>
                 _projectionScript.SimulateTrajectory(ball_prefab, ball.transform.position, velocityDir, speed);
                 if (Input.GetMouseButton(1))
                 {
+                    isGameStarted = true;
                     ShootBall(velocityDir, speed);
                     _projectionScript.SetLineRendererEnableState(false);
                 }
@@ -463,6 +488,19 @@ public class GameManager : Singleton<GameManager>
 
     }
 
+    public Vector2 GetBossDir() 
+    {
+        switch (bossType)
+        {
+            case BossType.Snall:
+                return snallBehaviour.moveDir;
+                //break;
+            case BossType.Gopher:
+                return GophersBehaviour.moveDir;
+                //break;  
+        }
+        return new Vector2();
+    }
 
     //async void WaitForShoot()
     //{
