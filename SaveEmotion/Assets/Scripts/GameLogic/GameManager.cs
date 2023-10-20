@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using JSAM;
 using UIManagement;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -89,8 +91,13 @@ public class GameManager : Singleton<GameManager>
 
     [Header("Liquid Mat Ctrl")]
     public Material liquidMat;
-
+    
+    [Header("Postprocessing control")]
     public SceneProjection _projectionScript;
+    public GameObject _postProcessing;
+    private Volume v;
+    private Bloom b;
+    private Vignette vg;
     // Start is called before the first frame update
 
 
@@ -102,6 +109,9 @@ public class GameManager : Singleton<GameManager>
     }
 
     public BossType bossType;
+    private bool isInBulletTime;
+    public float enterBulletTime = 2.0f;
+    private float bulletEnterTimeCount = 0.0f;
 
     [Header("Snall Info")]
     public GameObject Gophers;
@@ -151,6 +161,10 @@ public class GameManager : Singleton<GameManager>
         AudioManager.PlayMusic(JSAMMusic.BackGroundMusic);
         liquidMat.SetFloat("_WobbleX", 0.0f);
         StartCoroutine(UpdateEnergyMat(0, 2.0f));
+
+        v = _postProcessing.GetComponent<Volume>();
+        v.profile.TryGet(out b);
+        v.profile.TryGet(out vg);
     }
 
     // Update is called once per frame
@@ -244,7 +258,28 @@ public class GameManager : Singleton<GameManager>
 
         if (Input.GetKeyDown("k"))
         {
+            isInBulletTime = true;
+            Debug.Log("isInBulletTime :" +　isInBulletTime);
+        }
+
+        if (Input.GetKeyUp("k"))
+        {
+            isInBulletTime = false;
             TriggerUltraSkill();
+            Debug.Log("isInBulletTime　:" + isInBulletTime);
+        }
+
+        
+        if (isInBulletTime)
+        {
+            bulletEnterTimeCount += Time.deltaTime;
+            Time.timeScale = 0.5f;
+            vg.intensity.value = 0.65f;
+        }
+        else
+        {
+            Time.timeScale = 1.0f;
+            vg.intensity.value = 0.3f;
         }
 
     }
@@ -501,6 +536,8 @@ public class GameManager : Singleton<GameManager>
         }
         return new Vector2();
     }
+    
+    
 
     //async void WaitForShoot()
     //{
