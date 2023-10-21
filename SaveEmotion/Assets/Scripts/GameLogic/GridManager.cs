@@ -228,14 +228,14 @@ public class GridManager : Singleton<GridManager>
             {
                 NormalGrid childScript = fatherScript as NormalGrid;
                 float randomValue = UnityEngine.Random.Range(0, 1f);
-                if (randomValue > 0.5f)
-                {
-                    childScript.UnlockThisGrid();
-                }
-                else 
-                {
-                    childScript.LockThisGrid();
-                }
+                //if (randomValue > 0.5f)
+                //{
+                //    childScript.UnlockThisGrid();
+                //}
+                //else 
+                //{
+                //    childScript.LockThisGrid();
+                //}
             }
         }
     }

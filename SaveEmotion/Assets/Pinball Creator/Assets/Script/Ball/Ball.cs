@@ -119,7 +119,7 @@ public class Ball : MonoBehaviour {
 
 
 	public void OnTriggerEnter(Collider other){
-		Debug.Log("Collide");
+		//Debug.Log("Collide");
 		//if (other.tag == "Bricks") 
 		//{
 		//	other.gameObject.SetActive(false);

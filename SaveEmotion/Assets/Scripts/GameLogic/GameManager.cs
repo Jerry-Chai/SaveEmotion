@@ -97,20 +97,23 @@ public class GameManager : Singleton<GameManager>
     public GameObject _postProcessing;
     private Volume v;
     private Bloom b;
-    private Vignette vg;
-    // Start is called before the first frame update
+    private Vignette vg;    
+    
+    [Header("PrefabEffect GameObject")]
+    public GameObject CollisionEffectPrefab;
+    public Vector3 TriggerSkillPos;
 
 
-
+   
     public enum BossType 
     {
         Snall,
         Gopher
     }
-
+    [Header("Boss")]
     public BossType bossType;
     private bool isInBulletTime;
-    public float enterBulletTime = 2.0f;
+    public float enterBulletTime = 0.5f;
     private float bulletEnterTimeCount = 0.0f;
 
     [Header("Snall Info")]
@@ -265,21 +268,30 @@ public class GameManager : Singleton<GameManager>
         if (Input.GetKeyUp("k"))
         {
             isInBulletTime = false;
-            TriggerUltraSkill();
+            StartCoroutine(TriggerUltraSkill());
             Debug.Log("isInBulletTime　:" + isInBulletTime);
         }
 
         
         if (isInBulletTime)
         {
-            bulletEnterTimeCount += Time.deltaTime;
-            Time.timeScale = 0.5f;
-            vg.intensity.value = 0.65f;
+            if(bulletEnterTimeCount < 2.0f)bulletEnterTimeCount += Time.deltaTime / enterBulletTime;
+            float tempVal = Mathf.Clamp(bulletEnterTimeCount / enterBulletTime, 0.0f, 1.0f);
+            float timescale = Mathf.Lerp(1.0f, 0.5f, tempVal);
+            Time.timeScale = timescale;
+
+            float vgintensity = Mathf.Lerp(0.3f, 0.65f, tempVal);
+            vg.intensity.value = vgintensity;
         }
         else
         {
-            Time.timeScale = 1.0f;
-            vg.intensity.value = 0.3f;
+            if (bulletEnterTimeCount > 0.0f) bulletEnterTimeCount -= Time.deltaTime / enterBulletTime;
+            float tempVal = Mathf.Clamp(bulletEnterTimeCount / enterBulletTime, 0.0f, 1.0f);
+            float timescale = Mathf.Lerp(1.0f, 0.5f, tempVal);
+            Time.timeScale = timescale;
+
+            float vgintensity = Mathf.Lerp(0.3f, 0.65f, tempVal);
+            vg.intensity.value = vgintensity;
         }
 
     }
@@ -297,6 +309,7 @@ public class GameManager : Singleton<GameManager>
                 currSkillCharge = skillChargeCoolDown;
                 currentEnergy += 1;
                 currentEnergy = Mathf.Min(currentEnergy, 4);
+                if (currentEnergy == 4) return;
                 StartCoroutine(UpdateEnergyMat(currentEnergy, 2.0f));
                 //UIManager.Instance._uiList["UIManagement.UISkillPanel"].OnUpdate(currentEnergy / 4.0f);
             }
@@ -419,14 +432,37 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    public void TriggerUltraSkill()
+    IEnumerator TriggerUltraSkill()
     {
         if (currentEnergy > 3)
         {
             currentEnergy = 0;
             //UIManager.Instance._uiList["UIManagement.UISkillPanel"].OnUpdate(currentEnergy / 4.0f);
-            GridManager.Instance.TriggerSkill(ball.transform.position, 2, 2);
+            //GridManager.Instance.TriggerSkill(ball.transform.position, 2, 2);
             StartCoroutine(UpdateEnergyMat(0, 2.0f));
+            TriggerSkillPos = ball.transform.position;
+            GameObject CollisionEffect = Instantiate(CollisionEffectPrefab);
+            CollisionEffect.transform.position = TriggerSkillPos;
+            CollisionEffect.SetActive(true);
+            CollisionEffect.transform.localScale = 3.0f * Vector3.one;
+            CollisionEffect.GetComponent<ParticleSystem>().Play();
+            Debug.Log("Play Collision Effect");
+            yield return new WaitForSeconds(0.5f);
+
+            // create Sphere
+            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            sphere.transform.position = TriggerSkillPos;
+            sphere.transform.localScale = 15.0f * Vector3.one;
+            sphere.gameObject.name = "Collision";
+            sphere.gameObject.tag = "SkillRange";
+            sphere.GetComponent<MeshRenderer>().enabled = false;
+            sphere.GetComponent<Collider>().isTrigger = true;
+
+            yield return new WaitForSeconds(0.5f);
+            Destroy(sphere);
+            yield return new WaitForSeconds(1.0f);
+            Destroy(CollisionEffect);
+
         }
         // 1 means padding 1 grid;
         Debug.Log("Trigger Skill");
@@ -435,6 +471,8 @@ public class GameManager : Singleton<GameManager>
     public float[] energyValueList = new float[4]{-4.0f, -2.0f, 1.0f, 4.0f};
     IEnumerator UpdateEnergyMat(int index, float time) 
     {
+        Debug.Log((index + 3) % 4);
+        Debug.Log(index);
         float fromValue = energyValueList[(index + 3) % 4];
         float toValue = energyValueList[index];
         float currValue = 0.0f;

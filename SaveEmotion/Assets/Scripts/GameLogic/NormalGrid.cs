@@ -12,6 +12,8 @@ public class NormalGrid : GridBase
     {
         Locked,
         Unlocked,
+        Unlocking,
+        Locking
     }
 
 
@@ -62,29 +64,37 @@ public class NormalGrid : GridBase
         base.OnTriggerEnter(other);
         if (other.tag == "Ball")
         {
-            Debug.Log("Ball Hit this block");
-            if (gridState == NormalGridLockState.Unlocked) return;
+            //Debug.Log("Ball Hit this block");
+            if (gridState == NormalGridLockState.Unlocked || gridState == NormalGridLockState.Unlocking) return;
             //Debug.Log("Test!");
             StopCoroutine("Dissolve");
-            UnlockThisGrid();
+            UnlockThisGrid(GameManager.Instance.ballScript.ballDir);
             //GameManager.Instance.UpdateBrickNum(-1);
         }
-        else if (other.CompareTag("Boss")) 
+        else if (other.CompareTag("Boss"))
         {
-            if (gridState == NormalGridLockState.Locked) return;
-            Debug.Log("Boss locked this grid !!");
+            if (gridState == NormalGridLockState.Locked || gridState == NormalGridLockState.Locking) return;
+            //Debug.Log("Boss locked this grid !!");
             LockThisGrid();
+        }
+        else if (other.CompareTag("SkillRange")) 
+        {
+            Vector3 tempPos = GameManager.Instance.TriggerSkillPos - this.gameObject.transform.position;
+            Vector2 tempDir = new Vector2(tempPos.x, tempPos.z);
+            tempDir.Normalize();
+            UnlockThisGrid(-tempDir);
         }
 
 
     }
 
-    public void UnlockThisGrid() 
+    public void UnlockThisGrid(Vector2 ballDir) 
     {
-        gridState = NormalGridLockState.Unlocked;
+
+        gridState = NormalGridLockState.Unlocking;
         //Get a renderer component either of the own gameobject or of a child
         //set the color property
-        Vector2 ballDir = GameManager.Instance.ballScript.ballDir;
+        //Vector2 ballDir = GameManager.Instance.ballScript.ballDir;
         //StopCoroutine("Dissolve");
         //StartCoroutine(Dissolve(0, 200, 2, ballDir));
         AsyncDissolve(0, 200, 2, ballDir);
@@ -120,6 +130,7 @@ public class NormalGrid : GridBase
     
     async void AsyncDissolve(float fromValue, float toValue, float time, Vector2 objDir)
     {
+        
 //        Debug.Log("Async Task Started");
         float change = toValue - fromValue;
         change /= time;
@@ -143,17 +154,19 @@ public class NormalGrid : GridBase
         {
             if(this != null)
             GridManager.Instance.LockNormalGrid(this.gameObject.GetInstanceID(), this);
+            gridState = NormalGridLockState.Locked;
         }
         else 
         {
             if (this != null)
             GridManager.Instance.UnlockNormalGrid(this.gameObject.GetInstanceID(), this);
+            gridState = NormalGridLockState.Unlocked;
         }
     }
 
     public void LockThisGrid()
     {
-        gridState = NormalGridLockState.Locked;
+        gridState = NormalGridLockState.Locking;
         //Get a renderer component either of the own gameobject or of a child
         //set the color property
         //StopCoroutine("Dissolve");
