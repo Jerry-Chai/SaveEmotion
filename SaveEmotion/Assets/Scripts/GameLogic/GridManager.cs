@@ -103,33 +103,33 @@ public class GridManager : Singleton<GridManager>
 
     public void RegisteGrid(int instanceID, GridBase script)
     {
-        if (gridDic == null) 
-        {
-            gridDic = new Dictionary<int, GridBase>();
-            gridIDList = new List<int>();
-        }
-        if (gridDic.ContainsKey(instanceID))
-        {
-            Debug.LogError("We should not have two same instanceID, something is wrong here");
-        }
-        else 
-        {
-            gridIDList.Add(instanceID);
-            gridDic[instanceID] = script;
-            if (script.gridType == GridBase.GridType.NormalGrid) 
-            {
-                var normalGrid = script as NormalGrid;
-                if (normalGrid.gridState == NormalGrid.NormalGridLockState.Locked)
-                {
-                    LockedNormalGridDic[instanceID] = script;
-                }
-                else
-                {
-                    UnlockedNormalGridDic[instanceID] = script;
-                }
-            }
+        //if (gridDic == null) 
+        //{
+        //    gridDic = new Dictionary<int, GridBase>();
+        //    gridIDList = new List<int>();
+        //}
+        //if (gridDic.ContainsKey(instanceID))
+        //{
+        //    Debug.LogError("We should not have two same instanceID, something is wrong here");
+        //}
+        //else 
+        //{
+        //    gridIDList.Add(instanceID);
+        //    gridDic[instanceID] = script;
+        //    if (script.gridType == GridBase.GridType.NormalGrid) 
+        //    {
+        //        var normalGrid = script as NormalGrid;
+        //        if (normalGrid.gridState == NormalGrid.NormalGridLockState.Locked)
+        //        {
+        //            LockedNormalGridDic[instanceID] = script;
+        //        }
+        //        else
+        //        {
+        //            UnlockedNormalGridDic[instanceID] = script;
+        //        }
+        //    }
 
-        }
+        //}
 
     }
 

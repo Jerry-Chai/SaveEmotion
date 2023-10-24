@@ -93,7 +93,7 @@ Shader "Unlit/Dissolve"
                 
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
-                return half4(col.xyz, alpha);
+                return half4(col.xyz, alpha * 0.98);
             }
             ENDCG
         }
