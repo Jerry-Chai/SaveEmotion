@@ -17,6 +17,7 @@ Shader "Unlit/Dissolve"
         Tags { "RenderType"="Transparent" }
         LOD 100
         Blend SrcAlpha OneMinusSrcAlpha 
+        Cull Back
         Stencil
         {
             Ref 2

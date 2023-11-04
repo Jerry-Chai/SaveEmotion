@@ -75,7 +75,7 @@ public class NormalGrid : GridBase
         {
             if (gridState == NormalGridLockState.Locked || gridState == NormalGridLockState.Locking) return;
             //Debug.Log("Boss locked this grid !!");
-            LockThisGrid();
+            LockThisGrid(GameManager.Instance.GetBossDir());
         }
         else if (other.CompareTag("SkillRange")) 
         {
@@ -83,6 +83,20 @@ public class NormalGrid : GridBase
             Vector2 tempDir = new Vector2(tempPos.x, tempPos.z);
             tempDir.Normalize();
             UnlockThisGrid(-tempDir);
+        }
+        else if (other.CompareTag("StartSceneLockCollider"))
+        {
+            Vector3 tempPos = other.gameObject.transform.position - this.gameObject.transform.position;
+            Vector2 tempDir = new Vector2(tempPos.x, tempPos.z);
+            tempDir.Normalize();
+            UnlockThisGrid(-tempDir);
+        }
+        else if (other.CompareTag("StartSceneUnlocked"))
+        {
+            Vector3 tempPos = other.gameObject.transform.position - this.gameObject.transform.position;
+            Vector2 tempDir = new Vector2(tempPos.x, tempPos.z);
+            tempDir.Normalize();
+            LockThisGrid(tempDir);
         }
 
 
@@ -164,16 +178,15 @@ public class NormalGrid : GridBase
         }
     }
 
-    public void LockThisGrid()
+    public void LockThisGrid(Vector2 ballDir)
     {
         gridState = NormalGridLockState.Locking;
         //Get a renderer component either of the own gameobject or of a child
         //set the color property
         //StopCoroutine("Dissolve");
-        Vector2 snallDir = GameManager.Instance.GetBossDir();
-        Debug.Log(snallDir);//snallBehaviour.moveDir;
+ //snallBehaviour.moveDir;
         //StartCoroutine(Dissolve(200, 0 , 2, snallDir));
-        AsyncDissolve(200, -15 , 2, snallDir);
+        AsyncDissolve(200, -20.0f, 2, ballDir);
         //apply propertyBlock to renderer
     }
 
@@ -184,7 +197,7 @@ public class NormalGrid : GridBase
         //set the color property
         //StopCoroutine("Dissolve");
         //StartCoroutine(Dissolve(200, 0 , 2, snallDir));
-        AsyncDissolve(200, -15, 2, dir);
+        AsyncDissolve(200, -20.0f, 2, dir);
         //apply propertyBlock to renderer
     }
     

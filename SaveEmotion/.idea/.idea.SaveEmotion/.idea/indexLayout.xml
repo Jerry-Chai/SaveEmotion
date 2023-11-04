@@ -3,6 +3,7 @@
   <component name="ContentModelUserStore">
     <attachedFolders />
     <explicitIncludes>
+      <Path>Assets</Path>
       <Path>Library/PackageCache/com.brogrammist.jsam@2ab07ae779</Path>
       <Path>Library/PackageCache/com.unity.2d.tilemap.extras@3.0.3</Path>
       <Path>Library/PackageCache/com.unity.ai.navigation@1.1.1</Path>
@@ -33,6 +34,7 @@
     <explicitExcludes>
       <Path>.idea</Path>
       <Path>.vs</Path>
+      <Path>Library</Path>
       <Path>Logs</Path>
       <Path>Temp</Path>
       <Path>UserSettings</Path>

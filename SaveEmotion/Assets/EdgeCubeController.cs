@@ -25,8 +25,11 @@ public class EdgeCubeMovementController : MonoBehaviour
     public int currIndex;
     public int totalCubeNum;
     public bool gameEnable = false;
+    public bool needCountDown = true;
+    public bool needMovement = true;
     void Start()
     {
+        if (!needCountDown) return;
         totalCubeNum = transform.childCount;
         currIndex = -1;
 
@@ -42,6 +45,8 @@ public class EdgeCubeMovementController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if (!needCountDown) return;
         if (!gameEnable && (GameManager.Instance.currSpentTime > 0.0f))
         {
             gameEnable = true;

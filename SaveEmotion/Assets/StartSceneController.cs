@@ -5,13 +5,18 @@ using UnityEngine;
 
 public class StartSceneController : MonoBehaviour
 {
-    GameObject partA;
-    GameObject partB;
-    GameObject partC;
+    public GameObject partA;
+    public GameObject partB;
+    public GameObject partC;
+    public GameObject partD;
+    public GameObject allLocked;
     // Start is called before the first frame update
     void Start()
     {
-        
+        partA.GetComponent<Collider>().enabled = false;
+        partB.GetComponent<Collider>().enabled = false;
+        partC.GetComponent<Collider>().enabled = false;
+        partD.GetComponent<Collider>().enabled = false;
     }
 
     // Update is called once per frame
@@ -20,43 +25,81 @@ public class StartSceneController : MonoBehaviour
         
     }
 
-    IEnumerator TriggerUltraSkill()
+    public void OnlockA()
     {
-        //if (currentEnergy > 3)
-        //{
-        //    currentEnergy = 0;
-        //    //UIManager.Instance._uiList["UIManagement.UISkillPanel"].OnUpdate(currentEnergy / 4.0f);
-        //    //GridManager.Instance.TriggerSkill(ball.transform.position, 2, 2);
-        //    StartCoroutine(UpdateEnergyMat(0, 2.0f));
-        //    TriggerSkillPos = ball.transform.position;
-            //GameObject CollisionEffect = Instantiate(CollisionEffectPrefab);
-            //CollisionEffect.transform.position = this.transform.position; ;
-            //CollisionEffect.SetActive(true);
-            //CollisionEffect.transform.localScale = 3.0f * Vector3.one;
-            //CollisionEffect.GetComponent<ParticleSystem>().Play();
-            //Debug.Log("Play Collision Effect");
-            yield return new WaitForSeconds(0.5f);
+        StartCoroutine(UnlockCertainBlock(partA, 2.0f, 200.0f));
+    }
 
-            // create Sphere
-            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            sphere.transform.position = this.transform.position;
-            sphere.transform.localScale = 30.0f * Vector3.one;
-            sphere.gameObject.name = "Collision";
-            sphere.gameObject.tag = "SkillRange";
-            sphere.GetComponent<MeshRenderer>().enabled = false;
-            sphere.GetComponent<Collider>().isTrigger = true;
+    public void OnlockB()
+    {
+        StartCoroutine(UnlockCertainBlock(partB, 2.0f, 200.0f));
+    }
 
-            yield return new WaitForSeconds(0.5f);
-            Destroy(sphere);
-            //yield return new WaitForSeconds(1.0f);
-            //Destroy(CollisionEffect);
+    public void OnlockC()
+    {
+        StartCoroutine(UnlockCertainBlock(partC, 2.0f, 200.0f));
+    }
 
-        //}
-        // 1 means padding 1 grid;
-        Debug.Log("Trigger Skill");
+    public void OnlockD()
+    {
+        StartCoroutine(UnlockCertainBlock(partD, 2.0f, 200.0f));
+    }    
+    
+    public void LockAll()
+    {
+        StartCoroutine(UnlockCertainBlock(allLocked, 6.0f, 500.0f));
+    }
+    IEnumerator UnlockCertainBlock(GameObject sphere, float unlockTime, float destScale)
+    {
+        sphere.GetComponent<Collider>().enabled = true;
+        float count = 0.0f;
+        while (count < 1.0f) 
+        {
+            count += Time.deltaTime / unlockTime;
+            float scale = Mathf.Lerp(1.0f, destScale, count);
+            sphere.transform.localScale = scale * Vector3.one;
+            yield return null;
+        }
+        yield return null;
 
     }
 }
 
 
+
 //public class StartSceneController
+[CustomEditor(typeof(StartSceneController))]
+public class StartSceneControllerEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        StartSceneController myScript = target as StartSceneController;
+        if (GUILayout.Button("Unlock A"))
+        {
+            myScript.OnlockA();
+        }
+
+        if (GUILayout.Button("Unlock B"))
+        {
+            myScript.OnlockB();
+        }
+
+        if (GUILayout.Button("Unlock C"))
+        {
+            myScript.OnlockC();
+        }
+
+        if (GUILayout.Button("Unlock D"))
+        {
+            myScript.OnlockD();
+        }
+
+        if (GUILayout.Button("Lock All"))
+        {
+            myScript.LockAll();
+        }
+    }
+
+}

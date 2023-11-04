@@ -22,6 +22,8 @@ public class GridBase : MonoBehaviour
     // Start is called before the first frame update
     public void Start()
     {
+        string scenename = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        if (scenename == "IntroScene0000") return;
         GridManager.Instance.RegisteGrid(this.gameObject.GetInstanceID(), this);
     }
 
