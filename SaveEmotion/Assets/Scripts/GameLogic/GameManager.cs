@@ -5,6 +5,7 @@ using UIManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -119,8 +120,19 @@ public class GameManager : Singleton<GameManager>
     [Header("Snall Info")]
     public GameObject Gophers;
     public GophersBehaviour GophersBehaviour;
+
+    string sceneName;
     void Start()
     {
+        _projectionScript = GameObject.Find("ProjectionManager")?.GetComponent<SceneProjection>();
+
+        AudioManager.PlayMusic(JSAMMusic.BackGroundMusic);
+        // 获取当前激活的场景
+        Scene currentScene = SceneManager.GetActiveScene();
+
+        // 获取场景的名称
+        sceneName = currentScene.name;
+        if (sceneName == "IntroScene0000") return;
         gameState = GameState.NeedToReset;
         if (gameState == GameState.NeedToReset)
         {
@@ -159,9 +171,7 @@ public class GameManager : Singleton<GameManager>
 
         plane = new Plane(Vector3.up, ball.transform.position);
 
-        _projectionScript = GameObject.Find("ProjectionManager")?.GetComponent<SceneProjection>();
 
-        AudioManager.PlayMusic(JSAMMusic.BackGroundMusic);
         liquidMat.SetFloat("_WobbleX", 0.0f);
         StartCoroutine(UpdateEnergyMat(0, 2.0f));
 
@@ -173,6 +183,7 @@ public class GameManager : Singleton<GameManager>
     // Update is called once per frame
     void Update()
     {
+        if (sceneName == "IntroScene0000") return;
         //        Debug.Log(gameState.ToString());
         if (startCountDown)
         {
