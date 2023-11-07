@@ -105,6 +105,9 @@ public class GameManager : Singleton<GameManager>
     public Vector3 TriggerSkillPos;
 
 
+    [Header("EndScene Image")]
+    public GameObject EndSceneImage;
+
    
     public enum BossType 
     {
@@ -178,6 +181,11 @@ public class GameManager : Singleton<GameManager>
         v = _postProcessing.GetComponent<Volume>();
         v.profile.TryGet(out b);
         v.profile.TryGet(out vg);
+
+        if (EndSceneImage)
+        {
+            EndSceneImage.SetActive(false);
+        }
     }
 
     // Update is called once per frame
@@ -239,7 +247,7 @@ public class GameManager : Singleton<GameManager>
             hinge.spring = hingeSpring;
         }
 
-        if (Input.GetKeyDown("j"))
+        if (Input.GetKeyDown("j") || Input.GetButtonDown("Fire1"))
         {
             currentButtonPressedTime = buttonPressedDuration;
             isButtonPressed = true;
@@ -322,6 +330,7 @@ public class GameManager : Singleton<GameManager>
                 currentEnergy = Mathf.Min(currentEnergy, 4);
                 if (currentEnergy == 4) return;
                 StartCoroutine(UpdateEnergyMat(currentEnergy, 2.0f));
+                Debug.Log("Energy charging!");
                 //UIManager.Instance._uiList["UIManagement.UISkillPanel"].OnUpdate(currentEnergy / 4.0f);
             }
         }

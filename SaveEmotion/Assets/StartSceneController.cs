@@ -89,6 +89,29 @@ public class StartSceneController : MonoBehaviour
     {
         StartCoroutine(UnlockCertainBlock(allLocked, 6.0f, 500.0f, BompUpAllLock));
     }
+    
+    public void ChangeAreaCLock()
+    {
+        Sequence sequence = DOTween.Sequence();
+
+
+        sequence.Append(partCLockImage.transform.DOScale(0.001f, 0.5f))
+            .AppendCallback(() => {
+            // 缂╂斁鍔ㄧ敾瀹屾垚鍚庯紝杩欓噷浼氭墽琛屼綘鐨勫洖璋冮�昏緫
+            partCLockImage.sprite = lock_Off;
+            });
+        sequence.Append(partCLockImage.transform.DOScale(1.15f, 0.5f));
+        sequence.Append(partCLockImage.transform.DOScale(1.1f, 0.5f))
+            .AppendCallback(() => {
+                // 缂╂斁鍔ㄧ敾瀹屾垚鍚庯紝杩欓噷浼氭墽琛屼綘鐨勫洖璋冮�昏緫
+                hintObj.SetActive(true);
+                hintObj.GetComponent<Animator>().SetTrigger("xxx");
+            });;
+        
+        // ????????
+        sequence.Play();
+
+    }
     IEnumerator UnlockCertainBlock(GameObject sphere, float unlockTime, float destScale, Action callBack = null)
     {
         sphere.GetComponent<Collider>().enabled = true;
@@ -117,7 +140,7 @@ public class StartSceneController : MonoBehaviour
         Sequence sequence = DOTween.Sequence();
 
 
-        // 添加出现效果到序列中
+        // ??????效??????????
         sequence.Append(partALockImage.transform.DOScale(1.25f, 0.5f));
         sequence.Append(partALockImage.transform.DOScale(1.2f, 0.5f));
 
@@ -127,11 +150,11 @@ public class StartSceneController : MonoBehaviour
         sequence.Append(partDLockImage.transform.DOScale(1.25f, 0.5f));
         sequence.Append(partDLockImage.transform.DOScale(1.2f, 0.5f));
 
-        // 添加放大效果到序列中
+        // ?????效??????????
         sequence.Append(partCLockImage.transform.DOScale(1.15f, 0.5f));
         sequence.Append(partCLockImage.transform.DOScale(1.1f, 0.5f));
 
-        // 启动序列
+        // ????????
         sequence.Play();
 
     }
@@ -159,13 +182,20 @@ public class StartSceneControllerEditor : Editor
 
         StartSceneController myScript = target as StartSceneController;
 
-        if (GUILayout.Button("第一步 ———— 上锁所有地块，并出现锁"))
+        if (GUILayout.Button("Lock Area then show locks"))
         {
             myScript.LockAll();
 
         }
+        
+        if (GUILayout.Button("First Area Unlock"))
+        {
+            myScript.ChangeAreaCLock();
 
-        if (GUILayout.Button("第一步 ———— 上锁所有地块"))
+        }
+
+
+        if (GUILayout.Button("????? ???????? ???????械??"))
         {
             myScript.LockAll();
         }

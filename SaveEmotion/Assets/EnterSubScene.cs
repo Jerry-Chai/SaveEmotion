@@ -22,8 +22,8 @@ public class EnterSubScene : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("RawImage±»µã»÷ÁË£¡");
+        Debug.Log("RawImageè¢«ç‚¹å‡»äº†ï¼");
         SceneManager.LoadScene(EnterSubSceneName);
-        // ÔÚÕâÀïÌí¼Ó´¦Àíµã»÷ÊÂ¼şµÄÂß¼­
+        // åœ¨è¿™é‡Œæ·»åŠ å¤„ç†ç‚¹å‡»äº‹ä»¶çš„é€»è¾‘
     }
 }
