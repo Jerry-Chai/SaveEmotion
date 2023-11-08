@@ -82,7 +82,10 @@ public class NormalGrid : GridBase
             Vector3 tempPos = GameManager.Instance.TriggerSkillPos - this.gameObject.transform.position;
             Vector2 tempDir = new Vector2(tempPos.x, tempPos.z);
             tempDir.Normalize();
-            UnlockThisGrid(-tempDir);
+            if (gridState == NormalGridLockState.Locked)
+            {
+                UnlockThisGrid(-tempDir);
+            }
         }
         else if (other.CompareTag("StartSceneLockCollider"))
         {
