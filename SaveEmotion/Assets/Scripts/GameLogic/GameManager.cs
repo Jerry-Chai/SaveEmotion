@@ -105,8 +105,6 @@ public class GameManager : Singleton<GameManager>
     public Vector3 TriggerSkillPos;
 
 
-    [Header("EndScene Image")]
-    public GameObject EndSceneImage;
 
    
     public enum BossType 
@@ -122,7 +120,11 @@ public class GameManager : Singleton<GameManager>
 
     [Header("Snall Info")]
     public GameObject Gophers;
-    public GophersBehaviour GophersBehaviour;
+    public GophersBehaviour gophersBehaviour;
+
+    [Header("EndScene Image")]
+    public GameObject EndSceneImage;
+
 
     string sceneName;
     void Start()
@@ -169,7 +171,7 @@ public class GameManager : Singleton<GameManager>
         Gophers = GameObject.Find("Gophers");
         if (Gophers)
         {
-            GophersBehaviour = Gophers.GetComponent<GophersBehaviour>();
+            gophersBehaviour = Gophers.GetComponent<GophersBehaviour>();
         }
 
         plane = new Plane(Vector3.up, ball.transform.position);
@@ -313,6 +315,14 @@ public class GameManager : Singleton<GameManager>
             vg.intensity.value = vgintensity;
         }
 
+        if (currSpentTime > TotalTimeLimit && EndSceneImage) 
+        {
+            EndSceneImage.SetActive(true);
+            if(snallBehaviour)snallBehaviour.gameObject.SetActive(false);
+            if(gophersBehaviour) gophersBehaviour.gameObject.SetActive(false);
+            AudioManager.StopMusic(JSAMMusic.BackGroundMusic);
+            AudioManager.StopMusic(JSAMSounds.AlarmTick);
+        }
     }
 
 
@@ -589,7 +599,7 @@ public class GameManager : Singleton<GameManager>
                 return snallBehaviour.moveDir;
                 //break;
             case BossType.Gopher:
-                return GophersBehaviour.moveDir;
+                return gophersBehaviour.moveDir;
                 //break;  
         }
         return new Vector2();

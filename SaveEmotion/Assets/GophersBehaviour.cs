@@ -107,7 +107,7 @@ public class GophersBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.Instance.gameState != GameManager.GameState.Start) return;
+        if (GameManager.Instance.currSpentTime <= 0.0f) return;
         if (lastState != state)
         {
             lastState = state;
@@ -135,6 +135,7 @@ public class GophersBehaviour : MonoBehaviour
             originalPos.y = originalY;
             nextPos.y = originalY;
             totalDistance = Vector3.Distance(originalPos, nextPos);
+            this.gameObject.transform.LookAt(nextPos);
             currDistance = 0.0f;
         }
 
