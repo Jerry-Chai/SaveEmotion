@@ -18,7 +18,8 @@ public class StartSceneController : MonoBehaviour
     public GameObject partBLock;
     public GameObject partCLock;
     public GameObject partDLock;
-    public GameObject hintObj;
+    public GameObject hintObjC;
+    public GameObject hintObjB;
     public GameObject hintCircle;
     public GameObject hintFinger;
 
@@ -53,10 +54,14 @@ public class StartSceneController : MonoBehaviour
         partCLock.SetActive(false);
         partDLock.SetActive(false);
 
-        hintCircle = hintObj.transform.Find("HintCircle").gameObject;
-        hintFinger = hintObj.transform.Find("HintFinger").gameObject;
+        hintCircle = hintObjC.transform.Find("HintCircle").gameObject;
+        hintFinger = hintObjC.transform.Find("HintFinger").gameObject;        
+        
+        hintCircle = hintObjB.transform.Find("HintCircle").gameObject;
+        hintFinger = hintObjB.transform.Find("HintFinger").gameObject;
 
-        hintObj.SetActive(false);
+        hintObjC.SetActive(false);
+        hintObjB.SetActive(false);
     }
 
     // Update is called once per frame
@@ -104,14 +109,79 @@ public class StartSceneController : MonoBehaviour
         sequence.Append(partCLockImage.transform.DOScale(1.1f, 0.5f))
             .AppendCallback(() => {
                 // 缩放动画完成后，这里会执行你的回调逻辑
-                hintObj.SetActive(true);
-                hintObj.GetComponent<Animator>().SetTrigger("xxx");
+                hintObjC.SetActive(true);
+                hintObjC.GetComponent<Animator>().SetTrigger("xxx");
             });;
         
         // ????????
         sequence.Play();
-
+        
     }
+    
+    public void AreaCUnLock()
+    {
+        Sequence sequence = DOTween.Sequence();
+
+
+        // sequence.Append(partCLockImage.transform.DOScale(0.001f, 0.5f))
+        //     .AppendCallback(() => {
+        //         // 缩放动画完成后，这里会执行你的回调逻辑
+        //         partCLockImage.sprite = lock_Off;
+        //     });
+        sequence.Append(partCLockImage.transform.DOScale(0.01f, 0.5f))
+            .AppendCallback(() => {
+                // 缩放动画完成后，这里会执行你的回调逻辑
+                hintObjC.SetActive(false);
+                OnlockC();
+            });;
+        
+        sequence.Play();
+    }
+    
+    public void ChangeAreaBLock()
+    {
+        Sequence sequence = DOTween.Sequence();
+
+
+        sequence.Append(partBLockImage.transform.DOScale(0.001f, 0.5f))
+            .AppendCallback(() => {
+                // 缩放动画完成后，这里会执行你的回调逻辑
+                partBLockImage.sprite = lock_Off;
+            });
+        sequence.Append(partBLockImage.transform.DOScale(1.15f, 0.5f));
+        sequence.Append(partBLockImage.transform.DOScale(1.1f, 0.5f))
+            .AppendCallback(() => {
+                // 缩放动画完成后，这里会执行你的回调逻辑
+                hintObjB.SetActive(true);
+                hintObjB.GetComponent<Animator>().SetTrigger("xxx");
+            });;
+        
+        // ????????
+        sequence.Play();
+        
+    }
+    
+    public void AreaBUnLock()
+    {
+        Sequence sequence = DOTween.Sequence();
+
+
+        // sequence.Append(partCLockImage.transform.DOScale(0.001f, 0.5f))
+        //     .AppendCallback(() => {
+        //         // 缩放动画完成后，这里会执行你的回调逻辑
+        //         partCLockImage.sprite = lock_Off;
+        //     });
+        sequence.Append(partBLockImage.transform.DOScale(0.01f, 0.5f))
+            .AppendCallback(() => {
+                // 缩放动画完成后，这里会执行你的回调逻辑
+                hintObjB.SetActive(false);
+                OnlockB();
+            });;
+        
+        sequence.Play();  
+    }
+
+    
     IEnumerator UnlockCertainBlock(GameObject sphere, float unlockTime, float destScale, Action callBack = null)
     {
         sphere.GetComponent<Collider>().enabled = true;
@@ -161,7 +231,7 @@ public class StartSceneController : MonoBehaviour
 
     public void ShowHint()
     {
-        hintObj.SetActive(true);
+        hintObjC.SetActive(true);
         //hintCircle.transform.DOScale(1.0f, 0.5f).SetLoops(-1, LoopType.Restart);
         //hintFinger.transform.DOLocalMoveY(-100.0f, 0.5f).SetLoops(-1, LoopType.Yoyo);
     }
@@ -188,16 +258,29 @@ public class StartSceneControllerEditor : Editor
 
         }
         
-        if (GUILayout.Button("First Area Unlock"))
+        if (GUILayout.Button("First Area Clickable"))
         {
             myScript.ChangeAreaCLock();
 
         }
 
 
-        if (GUILayout.Button("????? ???????? ???????е??"))
+        if (GUILayout.Button("First Area Unlock"))
         {
-            myScript.LockAll();
+            myScript.AreaCUnLock();
+        }
+        
+        
+        if (GUILayout.Button("Second Area Clickable"))
+        {
+            myScript.ChangeAreaBLock();
+
+        }
+
+
+        if (GUILayout.Button("Second Area Unlock"))
+        {
+            myScript.AreaBUnLock();
         }
 
 

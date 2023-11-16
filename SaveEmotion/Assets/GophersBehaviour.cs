@@ -65,8 +65,10 @@ public class GophersBehaviour : MonoBehaviour
     // [Header("位置限制")]
     // public GameObject rightLower;
     // public GameObject leftUpper;
-
+    public GameObject zParticles0;
+    public GameObject zParticles1;
     public GameObject gophersRoot;
+    private Animator animator;
     private int lastHoleIndex = 0;
     void Start()
     {
@@ -77,7 +79,8 @@ public class GophersBehaviour : MonoBehaviour
         idleTimer = idleTime;
         defendTimer = defendTime;
         shootTimer = shootTime;
-
+        animator = this.transform.Find("Dugtrio_Anim").gameObject.GetComponent<Animator>();
+        animator.SetTrigger("Idle");
         // animator = GetComponent<Animator>();
         // animator.SetTrigger("Defend");
         moveDir = new Vector2(0.0f, 0.0f);
@@ -102,6 +105,8 @@ public class GophersBehaviour : MonoBehaviour
 
         Vector3 startPos = gophersRoot.transform.GetChild(lastHoleIndex).gameObject.transform.position;
         this.gameObject.transform.position = new Vector3(startPos.x, originalY, startPos.z);
+        zParticles0.SetActive(false);
+        zParticles1.SetActive(false);
     }
 
     // Update is called once per frame
@@ -137,6 +142,7 @@ public class GophersBehaviour : MonoBehaviour
             totalDistance = Vector3.Distance(originalPos, nextPos);
             this.gameObject.transform.LookAt(nextPos);
             currDistance = 0.0f;
+            StartCoroutine(SwitchAnimationState( GophersState.Move));
         }
 
         // 移动状态
@@ -156,6 +162,7 @@ public class GophersBehaviour : MonoBehaviour
         else if (state == GophersState.Move && distance <= 0.01f)
         {
             state = GophersState.Defend;
+            StartCoroutine(SwitchAnimationState(GophersState.Idle));
         }
 
         // 防御状态
@@ -163,10 +170,12 @@ public class GophersBehaviour : MonoBehaviour
         if (state == GophersState.Defend && defendTimer >= 0)
         {
             defendTimer -= Time.deltaTime;
+            
         }
         else if (state == GophersState.Defend && defendTimer < 0)
         {
             state = GophersState.ShootSkill;
+            
             defendTimer = defendTime;
         }
 
@@ -275,6 +284,24 @@ public class GophersBehaviour : MonoBehaviour
         Destroy(obj);
     }    
     
+    IEnumerator SwitchAnimationState(GophersState lastState) 
+    {
+        switch (lastState)
+        {
+            case GophersState.Move:
+                animator.SetTrigger("Move");
+                zParticles0.SetActive(false);
+                zParticles1.SetActive(false);
+                break;
+            default:          
+                animator.SetTrigger("Idle");
+                zParticles0.SetActive(true);
+                zParticles1.SetActive(true);
+                break;
+        }
+
+        yield return null;
+    }
     // IEnumerator SwitchAnimationState(GophersState lastState) 
     // {
     //     switch (lastState)
