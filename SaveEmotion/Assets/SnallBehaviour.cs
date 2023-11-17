@@ -245,17 +245,17 @@ public class SnallBehaviour : MonoBehaviour
                 hitCountDown = hitCount;
                 if (head0.activeSelf) 
                 {
-                    StartCoroutine(DeasableHead(head0, head0_mat, 2.0f));
+                    StartCoroutine(DeasableHead(head0, head0_mat, 5.0f));
                     return;
                 }
                 if (head1.activeSelf) 
                 {
-                    StartCoroutine(DeasableHead(head1, head1_mat, 2.0f));
+                    StartCoroutine(DeasableHead(head1, head1_mat, 5.0f));
                     return;
                 }
                 if (head2.activeSelf) 
                 {
-                    StartCoroutine(DeasableHead(head2, head2_mat, 2.0f));
+                    StartCoroutine(DeasableHead(head2, head2_mat, 5.0f));
                     StartCoroutine(DelayDestroy(this.gameObject));
                     return;
                 }

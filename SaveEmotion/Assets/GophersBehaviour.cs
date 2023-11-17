@@ -54,13 +54,13 @@ public class GophersBehaviour : MonoBehaviour
     // public int shootSkillNum = 6;
     // public List<GameObject> shootPos = new List<GameObject>();
     //
-    // public GameObject head0;
-    // public GameObject head1;
-    // public GameObject head2;
-    //
-    // public Material head0_mat;
-    // public Material head1_mat;
-    // public Material head2_mat;
+    public GameObject Body;
+    public bool head0;
+    public bool head1;
+    public bool head2;
+    public Material head0_mat;
+    public Material head1_mat;
+    public Material head2_mat;
     //
     // [Header("位置限制")]
     // public GameObject rightLower;
@@ -70,6 +70,9 @@ public class GophersBehaviour : MonoBehaviour
     public GameObject gophersRoot;
     private Animator animator;
     private int lastHoleIndex = 0;
+
+    public float hitCount = 2.0f;
+    private float hitCountDown = 0.0f;
     void Start()
     {
 
@@ -88,13 +91,13 @@ public class GophersBehaviour : MonoBehaviour
         //
         shoottedInThisLoop = false;
         //
-        // head0 = transform.Find("Eye").gameObject;
-        // head1 = transform.Find("Eye.005").gameObject;
-        // head2 = transform.Find("Eye.003").gameObject;
-        //
-        // head0_mat = head0.GetComponent<SkinnedMeshRenderer>().material;
-        // head1_mat = head1.GetComponent<SkinnedMeshRenderer>().material;
-        // head2_mat = head2.GetComponent<SkinnedMeshRenderer>().material;
+
+        head0_mat.SetFloat("_ControlValue", -30.0f);
+        head1_mat.SetFloat("_ControlValue", -30.0f);
+        head2_mat.SetFloat("_ControlValue", -30.0f);
+        //head0_mat = head0.GetComponent<SkinnedMeshRenderer>().material;
+        //head1_mat = head1.GetComponent<SkinnedMeshRenderer>().material;
+        //head2_mat = head2.GetComponent<SkinnedMeshRenderer>().material;
         //
         // if (!head0 || !head1 || !head2 || !head0_mat || !head1_mat || !head2_mat) 
         // {
@@ -107,6 +110,10 @@ public class GophersBehaviour : MonoBehaviour
         this.gameObject.transform.position = new Vector3(startPos.x, originalY, startPos.z);
         zParticles0.SetActive(false);
         zParticles1.SetActive(false);
+
+        hitCountDown = 0.0f;
+
+        head0 = head1 = head2 = true;
     }
 
     // Update is called once per frame
@@ -198,6 +205,12 @@ public class GophersBehaviour : MonoBehaviour
             shootTimer = shootTime;
         }
 
+        if (hitCountDown >= 0.0f)
+        {
+            hitCountDown -= Time.deltaTime;
+        }
+
+
     }
 
     public Vector3 DetermineNextPos()
@@ -225,8 +238,51 @@ public class GophersBehaviour : MonoBehaviour
     public void OnTriggerEnter(Collider other)
     {
         Debug.Log("Player is in the Gophers's range");
+
+        if (other.gameObject.tag == "Ball")
+        {
+            Debug.Log("Player is in the snall's range");
+            if (state == GophersState.Move)
+            {
+                if (hitCountDown >= 0.0f) return;
+                hitCountDown = hitCount;
+                if (head0)
+                {
+                    StartCoroutine(DeasableHead(head0_mat, 2.0f));
+                    head0 = false;
+                    return;
+                }
+                if (head1)
+                {
+                    StartCoroutine(DeasableHead(head1_mat, 2.0f));
+                    head1 = false;
+                    return;
+                }
+                if (head2)
+                {
+                    head2 = false;
+                    StartCoroutine(DeasableHead(head2_mat, 2.0f));
+                    StartCoroutine(DelayDestroy(this.gameObject));
+                    return;
+                }
+            }
+        }
     }
 
+    IEnumerator DeasableHead(Material mat, float time)
+    {
+        float timecount = 0.0f;
+        while (timecount < time)
+        {
+            timecount += Time.deltaTime;
+            float contrlVal = timecount / time;
+            float val = Mathf.Lerp(-30.0f, 200.0f, contrlVal);
+            mat.SetFloat("_ControlValue", val);
+            yield return null;
+        }
+        //head.SetActive(false);
+        yield return null;
+    }
     // public void TrigerGophersSkill(int revertBlockNum)
     // {
     //     if (GridManager.Instance.UnlockedNormalGridDic.Count <= 0)
@@ -271,6 +327,8 @@ public class GophersBehaviour : MonoBehaviour
     //     }
     //
     // }
+
+
 
     public void AniEvent_PlaySkillSound() 
     {
