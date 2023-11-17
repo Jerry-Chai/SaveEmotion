@@ -33,8 +33,8 @@ public class GridManager : Singleton<GridManager>
         // upperLeft = bricksInfo.upperLeft;
         // lowerRight = bricksInfo.lowerRight;
         // calculate Bounds:
-        // bricksBounds = bricksprefab.GetComponent<MeshRenderer>().bounds;
-        Debug.Log(bricksBounds.size);
+        // bricksBounds = bricksprefab.GetComposnent<MeshRenderer>().bounds;
+        //Debug.Log(bricksBounds.size);
         float width = 0;
         float height;
         if (lowerRight && upperLeft) width = Mathf.Abs(lowerRight.transform.position.x - upperLeft.transform.position.x);
@@ -44,8 +44,8 @@ public class GridManager : Singleton<GridManager>
 
         int xNum = Mathf.FloorToInt(width / bricksBounds.size.x);
         int yNum = Mathf.FloorToInt(height / bricksBounds.size.z);
-        Debug.Log(xNum);
-        Debug.Log(yNum);
+        //Debug.Log(xNum);
+        //Debug.Log(yNum);
         //for (int i = 0; i < xNum; i++)
         //{
         //    for (int j = 0; j < yNum; j++)

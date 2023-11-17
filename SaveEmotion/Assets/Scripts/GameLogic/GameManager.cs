@@ -464,7 +464,7 @@ public class GameManager : Singleton<GameManager>
 
     IEnumerator TriggerUltraSkill()
     {
-        if (currentEnergy > 3)
+        if (currentEnergy >= 3)
         {
             currentEnergy = 0;
             //UIManager.Instance._uiList["UIManagement.UISkillPanel"].OnUpdate(currentEnergy / 4.0f);
@@ -501,8 +501,8 @@ public class GameManager : Singleton<GameManager>
     public float[] energyValueList = new float[4]{-4.0f, -2.0f, 1.0f, 4.0f};
     IEnumerator UpdateEnergyMat(int index, float time) 
     {
-        Debug.Log((index + 3) % 4);
-        Debug.Log(index);
+//        Debug.Log((index + 3) % 4);
+  //S      Debug.Log(index);
         float fromValue = energyValueList[(index + 3) % 4];
         float toValue = energyValueList[index];
         float currValue = 0.0f;
